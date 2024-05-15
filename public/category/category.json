@@ -1,0 +1,47 @@
+{
+  "Java": {
+    "desc": "Articles for Java",
+    "blogs": [
+      {
+        "title": "demo",
+        "description": "blog description"
+      }
+    ]
+  },
+  "Python": {
+    "desc": "Articles for Python",
+    "blogs": [
+
+    ]
+  },
+  "Frontend": {
+    "desc": "Articles for Frontend",
+    "blogs": [
+
+    ]
+  },
+  "MySQL": {
+    "desc": "Articles for MySQL",
+    "blogs": [
+
+    ]
+  },
+  "Data structures": {
+    "desc": "Articles for Data structures",
+    "blogs": [
+
+    ]
+  },
+  "Algorithms": {
+    "desc": "Articles for Algorithms",
+    "blogs": [
+
+    ]
+  },
+  "AI": {
+    "desc": "Articles for AI",
+    "blogs": [
+
+    ]
+  }
+}
