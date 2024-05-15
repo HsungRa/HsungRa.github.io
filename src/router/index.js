@@ -7,6 +7,10 @@ import {ROUTER_404, ROUTER_500, ROUTER_ABOUT_ME, ROUTER_BLOG, ROUTER_HOME, ROUTE
  *  path: `/:lang/${ROUTER_CREATE_EMPLOYEE}/:id`,
  *  path: `/:lang/${ROUTER_RANK_AND_SALARY_REVIEW_HISTORY}/:type/:userId/`,
  */
+const getUrl =(name)=> {
+    return new URL(`../views/${name}.vue`, import.meta.url).href
+}
+// '../views/BlogPanel.vue'
 const routes = [
     {
         path: '/',
@@ -26,7 +30,7 @@ const routes = [
     {
         path: `/${ROUTER_BLOG_PANEL}/:category`,
         name: ROUTER_BLOG_PANEL,
-        component: () => import(/* webpackChunkName: "about" */ '../views/BlogPanel.vue')
+        component: () => import(/* webpackChunkName: "about" */ getUrl('BlogPanel'))
     },
     {
         path: `/${ROUTER_404}`,
