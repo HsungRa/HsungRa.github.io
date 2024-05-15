@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import {NodeGlobalsPolyfillPlugin} from '@esbuild-plugins/node-globals-polyfill'
 
 export default defineConfig({
-    base: './',
+    base: '/HsungRa.github.io/',
     plugins: [vue()],
     resolve: {
         alias: {
