@@ -6,13 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@kangc/v-md-editor": "^2.3.18",
     "@nuxt/content": "^2.12.1",
     "axios": "^1.6.8",
     "element-plus": "^2.7.0",
+    "gh-pages": "^6.1.1",
     "github-markdown-css": "^5.5.1",
     "gitment": "^0.0.3",
     "gray-matter": "^4.0.3",
