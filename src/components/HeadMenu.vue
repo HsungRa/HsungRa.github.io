@@ -31,7 +31,7 @@ import {ref} from 'vue'
 import {useRouter} from 'vue-router'
 
 const router = useRouter();
-const avatarSrc = "/src/assets/logo.jpg"
+const avatarSrc = "/logo.jpg"
 const activeIndex = ref('1')
 
 const handleSelect = (key, keyPath) => {
