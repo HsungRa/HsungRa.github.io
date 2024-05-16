@@ -1,5 +1,5 @@
 <script setup>
-import {CATEGORY_LIST, CATEGORY_CONFIG} from '../util/CategoryUtil'
+import {CATEGORY_CONFIG} from '../util/CategoryUtil'
 
 const buildHerf = (category) => {
   return "/panel/" + category
