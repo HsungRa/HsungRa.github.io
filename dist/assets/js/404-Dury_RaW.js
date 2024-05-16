@@ -1,1 +1,0 @@
-import{j as o,o as e,a as n}from"./index-5EahfUdt.js";import{_ as t}from"./_plugin-vue_export-helper-DlAUqK2U.js";const r=o({name:"404"});function a(s,c,p,_,f,m){return e(),n("h1",null,"404 not found")}const l=t(r,[["render",a]]);export{l as default};
