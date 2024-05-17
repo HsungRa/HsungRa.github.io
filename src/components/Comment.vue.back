@@ -1,0 +1,55 @@
+<!--<template>-->
+<!--  <div id="123123" ref="comment"></div>-->
+<!--</template>-->
+
+<!--<script lang="js">-->
+<!--import Gitment from 'gitment'-->
+<!--import {defineComponent, ref, watch} from 'vue'-->
+
+<!--const myRef = ref(null);-->
+<!--export default defineComponent({-->
+<!--  name: "Comment",-->
+<!--  props: {-->
+<!--    commentId: {-->
+<!--      type: String,-->
+<!--      required: true-->
+<!--    }-->
+<!--  },-->
+<!--  mounted() {-->
+<!--    myRef.value = document.getElementById("123123")-->
+<!--  },-->
+<!--  setup(props) {-->
+<!--    console.log(">>>>>>>>>>>>>1:" + props.commentId)-->
+<!--    const gitment = new Gitment({-->
+<!--      id: props.commentId,-->
+<!--      owner: 'HsungRa',-->
+<!--      repo: 'HsungRa.github.io',-->
+<!--      oauth: {-->
+<!--        client_id: 'Ov23lihyYbMQUE2nL7Vv',-->
+<!--        client_secret: 'ba712f3f0387bfd108c781bdab7259bf58234f7d',-->
+<!--      }-->
+<!--    })-->
+<!--    console.log(">>>>>>>>>>>>>1:" + myRef)-->
+
+<!--    gitment.render(myRef)-->
+
+<!--    // watch(() => props.commentId, (newId) => {-->
+<!--    //   console.log(">>>>>>>>>>>>>1:" + newId)-->
+<!--    //   const gitment = new Gitment({-->
+<!--    //     id: newId,-->
+<!--    //     owner: 'HsungRa',-->
+<!--    //     repo: 'HsungRa.github.io',-->
+<!--    //     oauth: {-->
+<!--    //       client_id: 'Ov23lihyYbMQUE2nL7Vv',-->
+<!--    //       client_secret: 'ba712f3f0387bfd108c781bdab7259bf58234f7d',-->
+<!--    //     }-->
+<!--    //   })-->
+<!--    //   gitment.render(myRef)-->
+<!--    // })-->
+<!--  },-->
+<!--})-->
+
+<!--</script>-->
+<!--<style scoped>-->
+<!--@import 'gitment/style/default.css';-->
+<!--</style>-->

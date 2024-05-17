@@ -7,10 +7,6 @@ import {ROUTER_404, ROUTER_500, ROUTER_ABOUT_ME, ROUTER_BLOG, ROUTER_HOME, ROUTE
  *  path: `/:lang/${ROUTER_CREATE_EMPLOYEE}/:id`,
  *  path: `/:lang/${ROUTER_RANK_AND_SALARY_REVIEW_HISTORY}/:type/:userId/`,
  */
-const getUrl =(name)=> {
-    return new URL(`../views/${name}.vue`, import.meta.url).href
-}
-// ''
 const routes = [
     {
         path: '/',

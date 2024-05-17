@@ -4,7 +4,7 @@ import App from './App.vue'
 import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import { createVuestic} from "vuestic-ui";
+import {createVuestic, createIconsConfig} from "vuestic-ui";
 import "vuestic-ui/css";
 import "material-design-icons-iconfont/dist/material-design-icons.min.css";
 // ===========================Markdown start===========================
@@ -33,6 +33,14 @@ VMdPreview.use(vuepressTheme, {
     Prism,
 }).use(createEmojiPlugin()).use(createMermaidPlugin()).use(createLineNumbertPlugin()).use(createCopyCodePlugin());
 
+
+const fonts = [
+    {
+        name: 'fa-{code}',
+        resolve: ({code}) => ({class: `fas fa-${code}`,}),
+    }
+]
+
 const app = createApp(App)
 app.use(router).use(ElementPlus).use(createVuestic(
     {
@@ -52,6 +60,8 @@ app.use(router).use(ElementPlus).use(createVuestic(
                     yourCustomColor: "#d0f55d",
                 },
             },
+            icons: createIconsConfig({fonts}),
+
         },
     }
 )).use(VMdPreview).mount('#app')
