@@ -5,7 +5,6 @@ import matter from 'gray-matter'
 import axios from 'axios';
 import MDRender from '../components/MDRender.vue'
 import CommentModule from '../components/CommentModule.vue'
-import {getBlogComment} from "../util/CommentUtil.js";
 
 const markdownContent = ref('');
 const mdHeader = ref({})
@@ -23,7 +22,7 @@ onMounted(async () => {
   }
 
   axios.get(`/posts/${name}.md`).then((res) => {
-    if (res.headers["content-type"] === "text/markdown") {
+    if (res.headers["content-type"].indexOf("text/markdown") > -1) {
       const {content, data} = matter(res.data)
       mdHeader.value = data
       markdownContent.value = content
@@ -50,7 +49,6 @@ onMounted(async () => {
         <MDRender :markdown="markdownContent"></MDRender>
       </div>
     </el-card>
-<!--    <Comment :blogInfo="blogInfo"></Comment>-->
     <CommentModule :blogInfo="blogInfo"></CommentModule>
   </div>
   <el-backtop :right="18" :bottom="100"/>
