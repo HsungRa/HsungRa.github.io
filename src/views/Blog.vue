@@ -4,8 +4,8 @@ import {useRouter} from 'vue-router'
 import matter from 'gray-matter'
 import axios from 'axios';
 import MDRender from '../components/MDRender.vue'
-import Comment from '../components/Comment.vue'
-
+import CommentModule from '../components/CommentModule.vue'
+import {getBlogComment} from "../util/CommentUtil.js";
 
 const markdownContent = ref('');
 const mdHeader = ref({})
@@ -16,12 +16,12 @@ const category = route.params.category
 const name = route.params.name
 
 const blogInfo = ref({})
-
 onMounted(async () => {
   blogInfo.value = {
     category: category,
     title: name
   }
+
   axios.get(`/posts/${name}.md`).then((res) => {
     if (res.headers["content-type"] === "text/markdown") {
       const {content, data} = matter(res.data)
@@ -50,7 +50,8 @@ onMounted(async () => {
         <MDRender :markdown="markdownContent"></MDRender>
       </div>
     </el-card>
-    <Comment :blogInfo="blogInfo"></Comment>
+<!--    <Comment :blogInfo="blogInfo"></Comment>-->
+    <CommentModule :blogInfo="blogInfo"></CommentModule>
   </div>
   <el-backtop :right="18" :bottom="100"/>
 

@@ -12,6 +12,9 @@ export default defineConfig({
             'vue': 'vue/dist/vue.esm-bundler.js',
         },
     },
+    server:{
+      cors:true
+    },
     optimizeDeps: {
         esbuildOptions: {
             // Node.js global to browser globalThis

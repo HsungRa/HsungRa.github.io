@@ -1,6 +1,6 @@
 <script>
 import {defineComponent, ref, watch} from "vue";
-import {loadComment, createComment, feedbackComment} from '../util/CommentUtil.js'
+import {loadComment, createComment, feedbackComment} from '../../util/CommentUtil.js'
 
 export default defineComponent({
   name: "Comment",
