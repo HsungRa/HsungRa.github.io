@@ -1,5 +1,5 @@
 import 'vue-router';
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 import {ROUTER_404, ROUTER_500, ROUTER_ABOUT_ME, ROUTER_BLOG, ROUTER_HOME, ROUTER_BLOG_PANEL} from './router_names'
 
 /**
@@ -41,7 +41,8 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    // history: createWebHistory(),
+    history: createWebHashHistory(),
     routes
 })
 

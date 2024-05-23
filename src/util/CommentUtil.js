@@ -1,14 +1,16 @@
 import axios from "axios";
 import {get,} from "./StorageUtil.js"
 import {AUTH_KEY,} from "./ThirdAuthUtil.js";
+import {Encrypt,Decrypt} from "./CryptoUtils.js";
 // api 文档https://docs.github.com/zh/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
-const TOKEN = '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'
+const TK ='wJ0LVhBwzPOqRBFJQaT2PtaGzRkNWEKH9DmNWMUl2/hhN74reo+ShPI17Myr/PjbcL2sYqQtj1Nowr4ITJLNDAAOYMPHS0HN5t8mX8soCV0XZMK4UOgXW2ly1FRhtVVV'
 const COMMENT_API_PRE_PATH = `https://api.github.com/repos/HsungRa/blog_comments`
+
 
 const config = (token) => {
     return {
         headers: {
-            Authorization: `Bearer ${token == null ? TOKEN : token}`,
+            Authorization: `Bearer ${token == null ? Decrypt(TK) : token}`,
         }
     }
 };
