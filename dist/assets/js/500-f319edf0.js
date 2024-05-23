@@ -1,1 +1,0 @@
-import{j as e,a as o,o as r}from"./index-7462c30e.js";import{_ as n}from"./_plugin-vue_export-helper-c27b6911.js";const t=e({name:"500"});function s(a,c,p,_,f,m){return r(),o("h1",null,"service error")}const d=n(t,[["render",s]]);export{d as default};
