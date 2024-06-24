@@ -1,5 +1,7 @@
 {
-  "Java": {
+  "1": {
+    "id": 1,
+    "category": "Java",
     "desc": "Articles for Java",
     "blogs": [
       {
@@ -8,40 +10,68 @@
       }
     ]
   },
-  "Python": {
+  "2": {
+    "id": 2,
+    "category": "Python",
     "desc": "Articles for Python",
     "blogs": [
-
     ]
   },
-  "Frontend": {
+  "3": {
+    "id": 3,
+    "category": "Frontend",
     "desc": "Articles for Frontend",
     "blogs": [
-
     ]
   },
-  "MySQL": {
+  "4": {
+    "id": 4,
+    "category": "MySQL",
     "desc": "Articles for MySQL",
     "blogs": [
-
     ]
   },
-  "Data structures": {
+  "5": {
+    "id": 5,
+    "category": "Data structures",
     "desc": "Articles for Data structures",
     "blogs": [
-
     ]
   },
-  "Algorithms": {
+  "6": {
+    "id": 6,
+    "category": "Algorithms",
     "desc": "Articles for Algorithms",
     "blogs": [
-
     ]
   },
-  "AI": {
+  "7": {
+    "id": 7,
+    "category": "AI",
     "desc": "Articles for AI",
     "blogs": [
-
     ]
-  }
+  },
+  "8": {
+    "id": 8,
+    "category": "Blog 搭建",
+    "desc": "记录一些blog搭建过程中所遇到过的坑",
+    "blogs": [
+      {
+        "title": "blogByGitPage",
+        "description": "build blog in git page"
+      }
+    ]
+  },
+  "9": {
+  "id": 9,
+  "category": "test",
+  "desc": "testtesttesttest",
+  "blogs": [
+    {
+      "title": "blogByGitPage",
+      "description": "build blog in git page"
+    }
+  ]
+}
 }
