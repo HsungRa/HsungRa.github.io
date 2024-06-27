@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "category": "Java",
+    "sub_categories": [
+      "虚拟机",
+      "基础",
+      "并发",
+      "Spring框架"
+    ]
+  },
+  {
+    "id": 2,
+    "category": "Python",
+    "sub_categories": [
+      "Python基础",
+      "Django",
+      "pandas,numpy"
+    ]
+  },
+  {
+    "id": 3,
+    "category": "前端",
+    "sub_categories": [
+      "html",
+      "css",
+      "js,jq",
+      "vue3",
+      "type js"
+    ]
+  },
+  {
+    "id": 4,
+    "category": "数据库",
+    "sub_categories": [
+      "MySQL",
+      "Oracle",
+      "Mongodb",
+      "HBase",
+      "SAP Hana",
+      "Microsoft Access DB"
+    ]
+  },
+  {
+    "id": 5,
+    "category": "数据结构与算法",
+    "sub_categories": [
+      "算法",
+      "数据结构",
+      "LeetCode"
+    ]
+  },
+  {
+    "id": 6,
+    "category": "架构,部署",
+    "sub_categories": [
+      "设计模式",
+      "Linux 基础",
+      "分布式",
+      "微服务",
+      "Serverless",
+      "CI/CD"
+    ]
+  },
+  {
+    "id": 7,
+    "category": "中间件",
+    "sub_categories": [
+      "MessageQueue",
+      "K8S",
+      "Docker"
+    ]
+  },
+  {
+    "id": 8,
+    "category": "大模型",
+    "sub_categories": [
+      "数学基础",
+      "ChatGPT"
+    ]
+  }
+]
