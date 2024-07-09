@@ -1,6 +1,14 @@
 import 'vue-router';
 import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
-import {ROUTER_404, ROUTER_500, ROUTER_ABOUT_ME, ROUTER_BLOG, ROUTER_HOME, ROUTER_BLOG_PANEL} from './router_names'
+import {
+    ROUTER_404,
+    ROUTER_500,
+    ROUTER_ABOUT_ME,
+    ROUTER_BLOG,
+    ROUTER_HOME,
+    ROUTER_BLOG_PANEL,
+    ROUTER_CATEGORY
+} from './router_names'
 
 /**
  * 如果path带参数：
@@ -27,6 +35,10 @@ const routes = [
         path: `/${ROUTER_BLOG_PANEL}/:category`,
         name: ROUTER_BLOG_PANEL,
         component: () => import(/* webpackChunkName: "about" */ '../views/BlogPanel.vue')
+    },{
+        path: `/${ROUTER_CATEGORY}/:pid/:subid`,
+        name: ROUTER_CATEGORY,
+        component: () => import(/* webpackChunkName: "about" */ '../views/Category.vue')
     },
     {
         path: `/${ROUTER_404}`,

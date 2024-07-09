@@ -1,7 +1,7 @@
 <script setup>
 import {CATEGORY_CONFIG, CATEGORY_COUNT, BLOG_CATEGORIES} from '../util/CategoryUtil'
 import {useRouter} from 'vue-router'
-import {ROUTER_BLOG_PANEL} from "../router/router_names.js";
+import {ROUTER_CATEGORY} from "../router/router_names.js";
 
 const carousels = [
   {'style': "background-color: #0b3289;height:100%;", "content": "#0b3289"},
@@ -36,8 +36,8 @@ for (let i = 1; i <= CATEGORY_COUNT; i = i + 2) {
 }
 
 const router = useRouter();
-const goto = (category) => {
-  return router.push(`/${ROUTER_BLOG_PANEL}/${category}`)
+const goto = (pid,subid) => {
+  return router.push(`/${ROUTER_CATEGORY}/${pid}/${subid}`)
 }
 
 const buildHerf = (category) => {
@@ -46,16 +46,14 @@ const buildHerf = (category) => {
 
 </script>
 <template>
-  <el-carousel height="200px" motion-blur>
+  <el-carousel height="200px" motion-blur indicator-position="none">
     <el-carousel-item v-for="item in carousels" :key="item">
       <div class="grid-content ep-bg-purple" :style="item.style">
-        <!--        color:indianred;-->
         <span style="font-size: 3.2rem;display:block;text-align: center;line-height:360%"
               class="carousel-content">{{ item.content }}</span>
       </div>
     </el-carousel-item>
   </el-carousel>
-  <!-- java 相关分类 -->
   <div v-for="v in BLOG_CATEGORIES">
     <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
@@ -64,16 +62,17 @@ const buildHerf = (category) => {
         </div>
       </el-col>
     </el-row>
-    <div v-for="i in v.sub_categories.length">
-      <el-row :gutter="10">
+
+    <div v-for="i in v.sub_categories.length" >
+      <el-row :gutter="10" v-if="v.sub_categories.length%2===0?2*i<=v.sub_categories.length:2*i-1<=v.sub_categories.length">
         <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
           <div class="grid-content ep-bg-purple">
-            <span style="font-size: 0.8rem;display:block;text-align: center;line-height:360%" class="p1">{{v.sub_categories[i]}}</span>
+            <span style="font-size: 0.8rem;display:block;text-align: center;line-height:360%" class="p1" @click="goto(v.id,v.sub_categories[2*i-2].id)">{{v.sub_categories[2*i-2].category}}</span>
           </div>
         </el-col>
-        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" v-if="2*i-1<v.sub_categories.length">
           <div class="grid-content ep-bg-purple">
-            <span style="font-size: 0.8rem;display:block;text-align: center;line-height:360%" class="p1">{{v.sub_categories[i+1]}}</span>
+            <span style="font-size: 0.8rem;display:block;text-align: center;line-height:360%" class="p1" @click="goto(v.id,v.sub_categories[2*i-1].id)">{{v.sub_categories[2*i-1].category}}</span>
           </div>
         </el-col>
       </el-row>
@@ -95,9 +94,11 @@ const buildHerf = (category) => {
   0 0 200px #0ebeff
 }
 
+/**鼠标移上去出现小手*/
 .p1 {
   color: #fff;
   transition: .2s;
+  cursor: pointer;
   &:hover {
     text-shadow: 0 0 10px #0ebeff,
     0 0 20px #0ebeff,

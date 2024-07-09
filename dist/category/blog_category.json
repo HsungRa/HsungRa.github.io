@@ -3,80 +3,80 @@
     "id": 1,
     "category": "Java",
     "sub_categories": [
-      "虚拟机",
-      "基础",
-      "并发",
-      "Spring框架"
+      {"id":9,"category": "虚拟机"},
+      {"id":10,"category": "基础"},
+      {"id":11,"category": "并发"},
+      {"id":12,"category": "Spring框架"}
     ]
   },
   {
     "id": 2,
     "category": "Python",
     "sub_categories": [
-      "Python基础",
-      "Django",
-      "pandas,numpy"
+      {"id":13,"category": "Python基础"},
+      {"id":14,"category": "Django"},
+      {"id":15,"category": "pandas,numpy"}
     ]
   },
   {
     "id": 3,
     "category": "前端",
     "sub_categories": [
-      "html",
-      "css",
-      "js,jq",
-      "vue3",
-      "type js"
+      {"id":16,"category": "Html"},
+      {"id":17,"category": "Css"},
+      {"id":18,"category": "JS,JQ"},
+      {"id":19,"category": "Vue3"},
+      {"id":20,"category": "Type Js"}
     ]
   },
   {
     "id": 4,
     "category": "数据库",
     "sub_categories": [
-      "MySQL",
-      "Oracle",
-      "Mongodb",
-      "HBase",
-      "SAP Hana",
-      "Microsoft Access DB"
+      {"id":21,"category": "MySQL"},
+      {"id":22,"category": "Oracle"},
+      {"id":23,"category": "Mongodb"},
+      {"id":24,"category": "HBase"},
+      {"id":25,"category": "SAP Hana"},
+      {"id":26,"category": "Microsoft Access DB"}
     ]
   },
   {
     "id": 5,
     "category": "数据结构与算法",
     "sub_categories": [
-      "算法",
-      "数据结构",
-      "LeetCode"
+      {"id":27,"category": "算法"},
+      {"id":28,"category": "数据结构"},
+      {"id":29,"category": "LeetCode"}
     ]
   },
   {
     "id": 6,
     "category": "架构,部署",
     "sub_categories": [
-      "设计模式",
-      "Linux 基础",
-      "分布式",
-      "微服务",
-      "Serverless",
-      "CI/CD"
+      {"id":30,"category": "设计模式"},
+      {"id":31,"category": "Linux 基础"},
+      {"id":32,"category": "分布式"},
+      {"id":33,"category": "微服务"},
+      {"id":34,"category": "Serverless"},
+      {"id":35,"category": "CI/CD"}
     ]
   },
   {
     "id": 7,
     "category": "中间件",
     "sub_categories": [
-      "MessageQueue",
-      "K8S",
-      "Docker"
+      {"id":36,"category": "MessageQueue"},
+      {"id":37,"category": "K8S"},
+      {"id":38,"category": "Docker"}
     ]
   },
   {
     "id": 8,
     "category": "大模型",
     "sub_categories": [
-      "数学基础",
-      "ChatGPT"
+      {"id":39,"category": "数学基础"},
+      {"id":40,"category": "ChatGPT"}
     ]
   }
 ]
