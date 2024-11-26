@@ -2,6 +2,7 @@
 import {CATEGORY_CONFIG, CATEGORY_COUNT, BLOG_CATEGORIES} from '../util/CategoryUtil'
 import {useRouter} from 'vue-router'
 import {ROUTER_BLOG_PANEL} from "../router/router_names.js";
+import {getCategoryList} from "../service/caterory_service.js";
 
 const carousels = [
   {'style': "background-color: #0b3289;height:100%;", "content": "#0b3289"},
@@ -22,9 +23,42 @@ const carousels = [
   {'style': "background-color: #fcefe8;height:100%;", "content": "#fcefe8"},
 
 ]
+/**
+ * [
+ *         {
+ *             "parent_code": null,
+ *             "code": "647373264309587968",
+ *             "category_name": "Python",
+ *             "desc": "Python",
+ *             "article_count": 0
+ *         },
+ *         {
+ *             "parent_code": null,
+ *             "code": "648820805639213056",
+ *             "category_name": "Java",
+ *             "desc": "Java",
+ *             "article_count": 0
+ *         }
+ *     ]
+ *
+ *
+ *
+ * {
+ *     "id": 1,
+ *     "category": "Java",
+ *     "sub_categories": [
+ *       "虚拟机",
+ *       "基础",
+ *       "并发",
+ *       "Spring框架"
+ *     ]
+ *   }
+ * @type {{}}
+ */
 
+getCategoryList().then((data)=>{
 
-
+})
 
 const category_map = {}
 for (let i = 1; i <= CATEGORY_COUNT; i = i + 2) {
@@ -46,12 +80,11 @@ const buildHerf = (category) => {
 
 </script>
 <template>
-  <el-carousel height="200px" motion-blur>
+  <el-carousel height="200px" motion-blur indicator-position="none">
     <el-carousel-item v-for="item in carousels" :key="item">
       <div class="grid-content ep-bg-purple" :style="item.style">
         <!--        color:indianred;-->
-        <span style="font-size: 3.2rem;display:block;text-align: center;line-height:360%"
-              class="carousel-content">{{ item.content }}</span>
+        <span style="font-size: 3.2rem;display:block;text-align: center;line-height:360%" class="carousel-content">{{ item.content }}</span>
       </div>
     </el-carousel-item>
   </el-carousel>
