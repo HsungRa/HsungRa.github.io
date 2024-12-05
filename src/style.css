@@ -1,11 +1,13 @@
 body {
-  /*#5d4d3f   #1e7b57  # 1c212d*/
-  background-color: #2f323c;
-  /*background-color: #FFFFF0;*/
-  /*margin: 0;*/
-  /*display: flex;*/
-  /*place-items: center;*/
-  /*min-width: 320px;*/
-  /*min-height: 100vh;*/
+    /*#5d4d3f   #1e7b57  # 1c212d*/
+    /*background-color: #2f323c;*/
+    /*background-color: #f68b5d;*/
+    /*margin: 0;*/
+    /*display: flex;*/
+    /*place-items: center;*/
+    /*min-width: 320px;*/
+    /*min-height: 100vh;*/
+    background-color: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 0.8);
 }
 

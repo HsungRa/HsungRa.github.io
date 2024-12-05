@@ -7,3 +7,8 @@ export const ROUTER_ABOUT_ME = 'about'
 export const ROUTER_BLOG = 'blog'
 export const ROUTER_BLOG_PANEL = 'panel'
 export const ROUTER_CATEGORY = 'category'
+
+export const ROUTER_POSTS_PAGE = 'posts'
+
+export const ROUTER_DEMO_PAGE = 'demo'
+

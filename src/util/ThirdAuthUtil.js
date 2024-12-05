@@ -1,13 +1,8 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
 import {getAuth, signInWithPopup, GithubAuthProvider} from "firebase/auth";
-import {put} from "./StorageUtil.js"
-// TODO: Add SDKs for Firebase products that you want to use
+import {get, put} from "./StorageUtil.js"
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyArZ8rP2pFW_tyx43UELbJ1aw7Mo30QXzE",
     authDomain: "rey-firebase-9527.firebaseapp.com",
@@ -19,34 +14,51 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 const provider = new GithubAuthProvider();
+provider.addScope('repo');
 const auth = getAuth(app);
+const _auth_key = 'auth_user'
+export const getAuthUser = ()=>{
+    if (null == get(_auth_key)) {
+        return null;
+    }
+    return JSON.parse(get(_auth_key));
+}
 
-export const AUTH_KEY ="AUTH_INFO_88";
-export const signInWithGitHub = () => {
-    signInWithPopup(auth, provider).then((result)=>{
-        //     console.log("####################GitHub auth result:",JSON.stringify(authRsp));
-        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-        const credential = GithubAuthProvider.credentialFromResult(result);
-        // The signed-in user info.
-        const user = result.user;
-        put(AUTH_KEY, {
-            'email': user.email,
-            'name': user.displayName,
-            'photoURL': user.photoURL,
-            'accessToken': credential.accessToken
-        })
-    }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GithubAuthProvider.credentialFromError(error);
-        // TODO
-        alert(errorMessage);
-        console.log("####################GitHub auth error:[errorCode:", errorCode, "errorMessage", errorMessage, "email:", email, "credential:", credential,"]");
-    });
+export const checkSignIn = (authSuccess) => {
+    const authUser = getAuthUser()
+    if (authUser !=null) {
+        if (authSuccess) {
+            authSuccess(authUser);
+        }
+    }else {
+        signInWithPopup(auth, provider).then((result)=>{
+            //     console.log("####################GitHub auth result:",JSON.stringify(authRsp));
+            // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+            const credential = GithubAuthProvider.credentialFromResult(result);
+            // The signed-in user info.
+            const user = result.user;
+            const authUser = {
+                email: user.email,
+                name: user.displayName,
+                photoURL: user.photoURL,
+                accessToken: credential.accessToken
+            }
+            put(_auth_key, authUser)
+            if (authSuccess) {
+                authSuccess(authUser);
+            }
+        }).catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GithubAuthProvider.credentialFromError(error);
+            // TODO
+            alert(errorMessage);
+            console.log("####################GitHub auth error:[errorCode:", errorCode, "errorMessage", errorMessage, "email:", email, "credential:", credential,"]");
+        });
+    }
 }

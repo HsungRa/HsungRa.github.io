@@ -1,0 +1,1 @@
+import{_ as e}from"./index-6939b0e5.js";const o={data(){return{}},created(){console.log("Component created.")},methods:{demoMethod(){}},mounted(){console.log("Component mounted.")}};function t(n,r,c,s,a,d){return null}const p=e(o,[["render",t]]);export{p as default};

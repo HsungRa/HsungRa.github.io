@@ -13,7 +13,14 @@ export default defineConfig({
         },
     },
     server:{
-      cors:true
+        port: '3000',
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8000/',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, '')
+            }
+        }
     },
     optimizeDeps: {
         esbuildOptions: {
@@ -41,5 +48,5 @@ export default defineConfig({
                 assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
             }
         }
-    }
+    },
 })

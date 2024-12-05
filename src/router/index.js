@@ -7,7 +7,7 @@ import {
     ROUTER_BLOG,
     ROUTER_HOME,
     ROUTER_BLOG_PANEL,
-    ROUTER_CATEGORY
+    ROUTER_CATEGORY, ROUTER_DEMO_PAGE, ROUTER_POSTS_PAGE
 } from './router_names'
 
 /**
@@ -27,18 +27,18 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ '../views/AboutMe.vue')
     },
     {
-        path: `/${ROUTER_BLOG}/:category/:name`,
+        path: `/${ROUTER_BLOG}/:articleCode`,
         name: ROUTER_BLOG,
-        component: () => import(/* webpackChunkName: "about" */ '../views/Blog.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/ArticleDetail.vue')
     },
     {
-        path: `/${ROUTER_BLOG_PANEL}/:category`,
+        path: `/${ROUTER_BLOG_PANEL}/:categoryCode`,
         name: ROUTER_BLOG_PANEL,
-        component: () => import(/* webpackChunkName: "about" */ '../views/BlogPanel.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/ArticleList.vue')
     },{
-        path: `/${ROUTER_CATEGORY}/:pid/:subid`,
+        path: `/${ROUTER_CATEGORY}/:code`,
         name: ROUTER_CATEGORY,
-        component: () => import(/* webpackChunkName: "about" */ '../views/Category.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/CategoryList.vue')
     },
     {
         path: `/${ROUTER_404}`,
@@ -49,6 +49,16 @@ const routes = [
         path: `/${ROUTER_500}`,
         name: ROUTER_500,
         component: () => import(/* webpackChunkName: "about" */ '../views/error/500.vue')
+    },
+    {
+        path: `/${ROUTER_DEMO_PAGE}`,
+        name: ROUTER_DEMO_PAGE,
+        component: () => import(/* webpackChunkName: "about" */ '../views/AboutMe.vue')
+    },
+    {
+        path: `/${ROUTER_POSTS_PAGE}`,
+        name: ROUTER_DEMO_PAGE,
+        component: () => import(/* webpackChunkName: "about" */ '../views/Posts.vue')
     },
 ]
 

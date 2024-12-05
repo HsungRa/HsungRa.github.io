@@ -3,7 +3,8 @@ import qs from 'qs'
 
 // 创建axios实例
 const axios_service = axios.create({
-    baseURL: process.env.VUE_APP_BASE_API, // API的基础URL
+    // baseURL: process.env.VUE_APP_BASE_API, // API的基础URL
+    baseURL: '',
     timeout: 5000 // 请求超时时间
 });
 axios_service.defaults.headers.post['Content-Type'] = 'application/json'
@@ -53,7 +54,7 @@ const axios_client = ({
                           url,
                           data,
                           headers,
-                          responseType
+                          responseType,
                       }) => {
     const config = {}
     if (headers) {
@@ -83,38 +84,56 @@ const axios_client = ({
     }
 }
 
-
-export const httpGet = (url, data) => {
+export const httpGet = (url, data, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
     return axios_client({
         url: url,
         method: 'get',
-        data,
+        data: data,
+        headers: headers
     })
 }
-export const httpPost = (url, data) => {
+export const httpPost = (url, data, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
     return axios_client({
         url: url,
         method: 'post',
-        data,
+        data: data,
+        headers: headers
     })
 }
-export const httpPut = (url, data) => {
+export const httpPut = (url, data, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
     return axios_client({
         url: url,
         method: 'put',
-        data
+        data: data,
+        headers: headers
     })
 }
 
-export const httpDelete = (url, data) => {
+export const httpDelete = (url, data, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
     return axios_client({
         url: url,
         method: 'delete',
-        data
+        data: data,
+        headers: headers
     })
 }
 
-export const httpPostImage = (url, data, params) => {
+export const httpPostImage = (url, data, params, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
     if (params) {
         const list = []
         for (const [key, value] of Object.entries(params)) {
@@ -122,42 +141,68 @@ export const httpPostImage = (url, data, params) => {
         }
         url = `${url}?${list.join('&')}`
     }
+    if (headers){
+        headers['Content-Type'] = 'multipart/form-data'
+    }else {
+        headers = {
+            'Content-Type': 'multipart/form-data'
+        }
+    }
     return axios_client({
         url: url,
         method: 'post',
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        },
+        headers: headers,
         data
     })
 }
-export const httpGetImage = (url, data) => {
+export const httpGetImage = (url, data, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
+    if (headers){
+        headers['Content-Type'] = 'application/octet-stream'
+    }else {
+        headers = {
+            'Content-Type': 'application/octet-stream'
+        }
+    }
     return axios_client({
         url: url,
         method: 'get',
-        headers: {
-            'Content-Type': 'application/octet-stream'
-        },
+        headers: headers,
         responseType: 'blob',
         data
     })
 }
 
-export const httpPostFile = (url, data) => {
+export const httpPostFile = (url, data, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
+
     return axios_client({
         url: url,
         method: 'post',
         responseType: 'blob',
-        data
+        data,
+        headers:headers
     })
 }
-export const httpMutiPartFormDataPost = (url, data) => {
+export const httpMutiPartFormDataPost = (url, data, headers = null, baseURL = '/api') => {
+    if (baseURL!=null && baseURL.trim()!=='') {
+        url = `${baseURL}${url}`
+    }
+    if (headers){
+        headers['Content-Type'] = 'multipart/form-data'
+    }else {
+        headers = {
+            'Content-Type': 'multipart/form-data'
+        }
+    }
     return axios_client({
         method: 'post',
         url: url,
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        },
+        headers: headers,
         data
     })
 }

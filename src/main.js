@@ -28,6 +28,9 @@ import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 // ===========================Markdown end ===========================
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
+
 
 VMdPreview.use(vuepressTheme, {
     Prism,
@@ -64,4 +67,4 @@ app.use(router).use(ElementPlus).use(createVuestic(
 
         },
     }
-)).use(VMdPreview).mount('#app')
+)).use(VMdPreview).use(Antd).mount('#app')

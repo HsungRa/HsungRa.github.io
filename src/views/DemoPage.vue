@@ -16,7 +16,7 @@ const items = ref<MenuProps['items']>([
   {
     key: 'posts',
     icon: () => h(AppstoreOutlined),
-    label: h('a', {href: 'posts'}, 'Posts'),
+    label: h('a', {href: '/posts'}, 'Posts'),
     title: 'Posts'
   },
   {
@@ -30,4 +30,11 @@ const items = ref<MenuProps['items']>([
     title: 'demo',
   },
 ]);
+
+// onMounted(()=>{
+//   getCategoryList().then((data) => {
+//     const categories = data.data
+//
+//   })
+// })
 </script>

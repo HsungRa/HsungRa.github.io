@@ -1,7 +1,7 @@
 <script setup>
-import {CATEGORY_CONFIG, CATEGORY_COUNT} from '../util/CategoryUtil'
+import {CATEGORY_CONFIG, CATEGORY_COUNT} from '../../util/CategoryUtil.js'
 import {useRouter} from 'vue-router'
-import {ROUTER_BLOG_PANEL} from "../router/router_names.js";
+import {ROUTER_BLOG_PANEL} from "../../router/router_names.js";
 
 const carousels = [
   {'style': "background-color: #0b3289;height:100%;", "content": "#0b3289"},
