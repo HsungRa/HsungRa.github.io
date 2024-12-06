@@ -1,19 +1,13 @@
 <template>
   <div class="common-layout">
-    <el-container style="background-color: rgba(255, 255, 255, 1);color: rgba(0, 0, 0, 0.8);">
+    <el-container style="height:100%; background-color: rgba(255, 255, 255, 1);color: rgba(0, 0, 0, 0.8);">
       <el-header><head-menu/></el-header>
-      <el-container>
-        <router-view style="width:100%" v-if="isRouterAlive"/>
-<!--        <el-aside class="el-aside-left" ><left-aside/></el-aside>-->
-<!--        <el-main><router-view style="width:100%" v-if="isRouterAlive"/></el-main>-->
-<!--        <el-aside class="el-aside-right"><right-aside/></el-aside>-->
+      <el-container style="height:100%;">
+        <router-view style="width:100%; height:100%;" v-if="isRouterAlive"/>
       </el-container>
     </el-container>
   </div>
 </template>
-
-
-
 <script setup>
 import {nextTick, provide, reactive, ref} from 'vue'
 import {RouterView} from 'vue-router'
@@ -46,7 +40,9 @@ provide("rightAsideConfig", reactive({
 
 </script>
 <style scoped>
-
+.common-layout{
+  height:100%;
+}
 .el-header {
   width: 100%;
   position: relative;
@@ -62,26 +58,27 @@ provide("rightAsideConfig", reactive({
   bottom: 0;
   overflow-y: scroll;
 }
-
-.el-aside-left {
-//background-color: #2f323c;
-  width: 12%;
-  display: block;
-  position: absolute;
-  margin-left: 0;
-  top: 60px;
-  bottom: 0;
-}
-
-.el-aside-right {
-//background-color: #2f323c;
-  width: 12%;
-  display: block;
-  position: absolute;
-  right: 0;
-  top: 60px;
-  bottom: 0;
-  margin-left: 88%;
-}
 </style>
 
+<!--
+//.el-aside-left {
+////background-color: #2f323c;
+//  width: 12%;
+//  display: block;
+//  position: absolute;
+//  margin-left: 0;
+//  top: 60px;
+//  bottom: 0;
+//}
+//
+//.el-aside-right {
+////background-color: #2f323c;
+//  width: 12%;
+//  display: block;
+//  position: absolute;
+//  right: 0;
+//  top: 60px;
+//  bottom: 0;
+//  margin-left: 88%;
+//}
+-->

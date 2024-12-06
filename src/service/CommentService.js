@@ -1,4 +1,4 @@
-import {httpGet, httpPost} from '../util/http_util.js'
+import {httpGet, httpPost} from '../util/HttpUtil.js'
 
 const COMMENT_API_PRE_PATH = `https://api.github.com/repos/HsungRa/blog_comments`
 

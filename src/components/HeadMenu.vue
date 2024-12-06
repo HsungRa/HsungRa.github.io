@@ -1,33 +1,68 @@
 <template>
-  <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" />
+  <a-flex gap="middle" align="center" vertical>
+    <a-flex gap="middle" align="center">
+      <a-avatar src="/logo.jpg" alt="hi~" style="margin-right: 100px" />
+      <a-menu
+          v-model:selectedKeys="current"
+          mode="horizontal"
+          :items="items"
+          @click="handlerClick"
+          style="font-weight:bold"
+      />
+    </a-flex>
+  </a-flex>
 </template>
 <script lang="ts" setup>
 import {h, onMounted, ref} from 'vue';
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import { MenuProps } from 'ant-design-vue';
+import {SearchOutlined, ReadOutlined, SmileOutlined, BugOutlined} from '@ant-design/icons-vue';
+import {MenuProps} from 'ant-design-vue';
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 const current = ref<string[]>(['mail']);
 const items = ref<MenuProps['items']>([
   {
-    key: 'search',
-    icon: () => h(MailOutlined),
-    label: h('a', {href: '/'}, 'Search'),
+    key: '/',
+    icon: () => h(SearchOutlined),
+    // label: h('a', {index: '/'}, 'Search'),
+    label: 'Search',
     title: 'Search',
   },
   {
-    key: 'posts',
-    icon: () => h(AppstoreOutlined),
-    label: h('a', {href: 'posts'}, 'Posts'),
+    key: '/posts',
+    icon: () => h(ReadOutlined),
+    // label: h('a', {index: '/posts'}, 'Posts'),
+    label: 'Posts',
     title: 'Posts'
   },
   {
-    key: 'about me',
-    label: h('a', {href: '/about'}, 'about me'),
-    title: 'about me',
+    key: '/about',
+    icon: () => h(SmileOutlined),
+    // label: h('a', {index: '/about'}, 'Message Me'),
+    label: 'Message Me',
+    title: 'Message Me',
   },
   {
-    key: 'demo',
-    label: h('a', {href: '/demo'}, 'demo'),
-    title: 'demo',
+    key: '/demo',
+    icon: () => h(BugOutlined),
+    label: 'Demo',
+    title: 'Demo',
   },
 ]);
+const handlerClick = ({item, key, keyPath}) => {
+  if (key === '0') {
+    return;
+  }
+  console.log(item, key, keyPath);
+  router.push({path: key})
+}
 </script>
+<style scoped>
+.search {
+  margin-left: 50%;
+  height: 100%;
+}
+</style>/
+
+
+

@@ -1,4 +1,4 @@
-import { httpGet } from '../util/http_util.js'
+import { httpGet } from '../util/HttpUtil.js'
 
 
 export const getArticleList = (categoryCode) => {

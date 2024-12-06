@@ -10,12 +10,6 @@ const router = useRouter();
 const categories = ref([])
 const articles = ref([])
 
-// watch(() => router.currentRoute.value.params, (newParams) => {
-//   getArticleList(newParams.categoryCode).then(res => {
-//     articles.value = res.data
-//   });
-// });
-
 const loadPosts = (categoryCode) => {
   getArticleList(categoryCode).then(res => {
     articles.value = res.data
