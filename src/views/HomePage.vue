@@ -85,7 +85,10 @@
 <!--</script>-->
 
 <template>
-  <div class="chat-container">
+  <a-row>
+    <a-col :span="3"></a-col>
+    <a-col :span="18">
+      <div class="chat-container">
     <!-- 消息显示区域 -->
     <main class="chat-messages" ref="messages">
       <div
@@ -107,57 +110,54 @@
           class="chat-input"
           @keydown.enter="sendMessage"
       />
-      <a-button type="primary" class="send-button" @click="sendMessage">
+      <a-button type="primary" class="send-button" shape="round" @click="sendMessage">
+        <template #icon>
+          <ToTopOutlined />
+        </template>
         Send
       </a-button>
     </footer>
   </div>
+    </a-col>
+    <a-col :span="3"></a-col>
+  </a-row>
 </template>
 
-<script>
-import { ref, reactive, onMounted } from 'vue';
+<script setup>
+import {ref, reactive, onMounted} from 'vue';
+import {ToTopOutlined} from '@ant-design/icons-vue';
 
-export default {
-  data(){
-    return {
-      userInput:'',
-      messageList: [],
+const userInput = ref('')
+const messageList = ref([])
 
-    }
-  },
-  methods: {
-    sendMessage(){
-      console.log(this.userInput);
-      const content = this.userInput.trim();
-      if (!content) return;
+const sendMessage = () => {
+  console.log(userInput.value);
+  const content = userInput.value.trim();
+  if (!content) return;
+  // 添加用户消息
+  messageList.value.push({sender: 'user', content});
+  // 清空输入框
+  userInput.value = '';
+  // 模拟 ChatGPT 响应
+  simulateResponse(content);
+}
 
-      // 添加用户消息
-      this.messageList.push({ sender: 'user', content });
-
-      // 清空输入框
-      this.userInput = '';
-
-      // 模拟 ChatGPT 响应
-      this.simulateResponse(content);
-    },
-    simulateResponse(input){
-      setTimeout(() => {
-        const response = `ChatGPT: Here is a reply to "${input}"`;
-        this.messageList.push({ sender: 'gpt', content: response });
-        // 滚动到最新消息
-        const messagesDiv = document.querySelector('.chat-messages');
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }, 1000);
-    }
-  },
-};
+const simulateResponse = (input) => {
+  setTimeout(() => {
+    const response = `ChatGPT: Here is a reply to "${input}"`;
+    messageList.value.push({sender: 'gpt', content: response});
+    // 滚动到最新消息
+    const messagesDiv = document.querySelector('.chat-messages');
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }, 1000);
+}
 </script>
 
 <style scoped>
 /* 容器整体样式 */
 .chat-container {
-  width: 600px;
-  height: 700px;
+  width: 100%;
+  height: 100%;
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -218,9 +218,9 @@ export default {
   gap: 10px;
 }
 
-.chat-input {
+.ant-input {
   flex: 1;
-  width: 70%;
+  width: 70% !important;
   border-radius: 20px;
   border: 1px solid #d9d9d9;
   padding: 10px 15px;

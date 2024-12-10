@@ -1,7 +1,7 @@
 <template>
   <a-flex gap="middle" align="center" vertical>
     <a-flex gap="middle" align="center">
-      <a-avatar src="/logo.jpg" alt="hi~" style="margin-right: 100px" />
+<!--      <a-avatar src="/logo.jpg" alt="hi~" style="margin-right: 100px" />-->
       <a-menu
           v-model:selectedKeys="current"
           mode="horizontal"
