@@ -29,7 +29,7 @@ import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 // ===========================Markdown end ===========================
 import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
+import 'ant-design-vue/dist/reset.css';
 
 
 VMdPreview.use(vuepressTheme, {
