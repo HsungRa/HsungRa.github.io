@@ -24,10 +24,10 @@ const routes = [
     {
         path: `/${ROUTER_ABOUT_ME}`,
         name: ROUTER_ABOUT_ME,
-        component: () => import(/* webpackChunkName: "about" */ '../views/AboutMe.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/DemoPage.vue')
     },
     {
-        path: `/${ROUTER_BLOG}/:articleCode`,
+        path: `/${ROUTER_BLOG}`,
         name: ROUTER_BLOG,
         component: () => import(/* webpackChunkName: "about" */ '../views/ArticleDetail.vue')
     },
@@ -53,7 +53,7 @@ const routes = [
     {
         path: `/${ROUTER_DEMO_PAGE}`,
         name: ROUTER_DEMO_PAGE,
-        component: () => import(/* webpackChunkName: "about" */ '../views/AboutMe.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/DemoPage.vue')
     },
     {
         path: `/${ROUTER_POSTS_PAGE}`,

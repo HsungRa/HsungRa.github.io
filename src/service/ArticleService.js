@@ -1,4 +1,5 @@
 import { httpGet } from '../util/HttpUtil.js'
+import { defineStore } from 'pinia'
 
 
 export const getArticleList = (categoryCode) => {
@@ -11,3 +12,15 @@ export const getArticleDetail = (articleCode) => {
     return httpGet(url)
 }
 
+const ArticleStore = defineStore('article', {
+    state: () => ({
+        currentArticle: null
+    }),
+    actions: {
+        setCurrentArticle(currentArticle) {
+            this.currentArticle = currentArticle;
+        }
+    }
+});
+
+export const articleStore = ArticleStore()

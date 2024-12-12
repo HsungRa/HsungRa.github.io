@@ -1,15 +1,16 @@
 <script setup>
-import {inject, nextTick, onMounted, ref} from 'vue';
-import {useRouter} from 'vue-router'
-import Comment from '../components/Comment.vue'
-import {getArticleDetail} from "../service/ArticleService.js";
 import "github-markdown-css/github-markdown.css"
 import "highlight.js/styles/atom-one-light.css"
 
-const {currentRoute} = useRouter();
-const route = currentRoute.value;
+import {inject, nextTick, onMounted, ref} from 'vue';
+import Comment from '../components/Comment.vue'
+import {articleStore} from '../service/ArticleService.js'
+import {PostService} from "../service/PostService.js";
+
+
+
 const rightAsideConfig = inject("rightAsideConfig");
-const articleCode = route.params.articleCode;
+const articlePath = articleStore.currentArticle;
 const markdownContent = ref('');
 const mdHeader = ref({})
 const commentNumber = ref('')
@@ -76,21 +77,25 @@ const removeScrollEventListener = () => {
 }
 // ========================================================================================================
 onMounted( () => {
-  getArticleDetail(articleCode).then(res => {
-    const article = res.data
-    mdHeader.value = {
-      title: article.title,
-      category_code: article.category_code,
-      category: article.category_name,
-      date: article.time,
-      readings: article.readings,
-      tags: []
-    }
-    commentNumber.value = article.comment_number
-    rightAsideConfig.value = article.article_toc
-    markdownContent.value = article.content
-    directoryInit(article.article_toc);
+  PostService.readLocalMarkdownFile(articlePath).then(res => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>readMarkdownFile", res)
+    markdownContent.value = res
   })
+  // getArticleDetail(articleCode).then(res => {
+  //   const article = res.data
+  //   mdHeader.value = {
+  //     title: article.title,
+  //     category_code: article.category_code,
+  //     category: article.category_name,
+  //     date: article.time,
+  //     readings: article.readings,
+  //     tags: []
+  //   }
+  //   commentNumber.value = article.comment_number
+  //   rightAsideConfig.value = article.article_toc
+  //   markdownContent.value = article.content
+  //   directoryInit(article.article_toc);
+  // })
 });
 nextTick(() => {
   // addScrollEventListener();
@@ -101,18 +106,18 @@ nextTick(() => {
   <el-container class="page-container">
     <el-container>
       <el-main>
-        <h1 class="title">{{ mdHeader.title }}</h1>
-        <div class="meta">
-          <div class="line">
-            <div><strong>category: </strong> {{ mdHeader.category }}</div>
-            <div><strong>date: </strong> {{ mdHeader.date }}</div>
-            <div><strong>readings: </strong> {{ mdHeader.readings }}</div>
-            <div>
-              <strong>tags: </strong>
-              <el-tag size="small" v-for="tag in mdHeader.tags" :key="tag">{{ tag }}</el-tag>
-            </div>
-          </div>
-        </div>
+<!--        <h1 class="title">{{ mdHeader.title }}</h1>-->
+<!--        <div class="meta">-->
+<!--          <div class="line">-->
+<!--            <div><strong>category: </strong> {{ mdHeader.category }}</div>-->
+<!--            <div><strong>date: </strong> {{ mdHeader.date }}</div>-->
+<!--            <div><strong>readings: </strong> {{ mdHeader.readings }}</div>-->
+<!--            <div>-->
+<!--              <strong>tags: </strong>-->
+<!--              <el-tag size="small" v-for="tag in mdHeader.tags" :key="tag">{{ tag }}</el-tag>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="content" ref="contentRef">
           <v-md-preview :text="markdownContent" ref="mdRef"></v-md-preview>
         </div>

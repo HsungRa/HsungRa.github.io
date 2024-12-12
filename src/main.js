@@ -30,6 +30,9 @@ import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
 // ===========================Markdown end ===========================
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
+// ===========================pinia ===========================
+import { createPinia } from 'pinia'
+const pinia = createPinia()
 
 
 VMdPreview.use(vuepressTheme, {
@@ -67,4 +70,4 @@ app.use(router).use(ElementPlus).use(createVuestic(
 
         },
     }
-)).use(VMdPreview).use(Antd).mount('#app')
+)).use(VMdPreview).use(Antd).use(pinia).mount('#app')

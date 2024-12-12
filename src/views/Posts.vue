@@ -1,38 +1,69 @@
 <script setup>
-import CategoryMenu from "../components/CategoryMenu.vue";
-
 import {useRouter} from 'vue-router'
-import {onMounted, ref, watch} from "vue";
-import {getArticleList} from "../service/ArticleService.js";
-import {getCategoryList} from "../service/CategoryService.js";
+import {onMounted, ref} from "vue";
+import {PostService} from '../service/PostService.js'
+import {articleStore} from '../service/ArticleService.js'
 import CategoryMenuItem from "../components/CategoryMenuItem.vue";
+
 const router = useRouter();
 const categories = ref([])
 const articles = ref([])
 
-const loadPosts = (categoryCode) => {
-  getArticleList(categoryCode).then(res => {
-    articles.value = res.data
-  });
+const loadPosts = (path) => {
+  try {
+    if (!categories.value[0]) {
+      return
+    }
+    const findDirectory = (tree, targetPath) => {
+      if (tree.filePath === targetPath) {
+        return tree;
+      }
+      for (const child of tree.children) {
+        const found = findDirectory(child, targetPath);
+        if (found) return found;
+      }
+      return null;
+    };
+    const directory = findDirectory(categories.value[0], path);
+    if (!directory) {
+      return []
+    }
+    /**
+     * name: pathParts[pathParts.length - 1],
+     *                     filePath: `posts/${relativePath}`,
+     *                     lastModified: frontmatter.date || new Date().toISOString(), // 优先使用 frontmatter 中的日期
+     *                     summary: this.generateSummary(fileContent)
+     */
+    return directory.posts.map(md => {
+      md.name = md.name.replace('.md', '')
+      return md
+    });
+  } catch (error) {
+    console.error('获取文件列表失败:', error);
+    throw new Error(`无法获取目录 ${path} 下的文件`);
+  }
 }
 
-onMounted(() => {
-  getCategoryList().then((data) => {
-    categories.value = data.data
-    if (categories.value.length > 0) {
-      loadPosts(categories.value[0].code)
-    }
+const loadCategories = () => {
+  PostService.getLocalDirectoryTree().then(res => {
+    console.log(res)
+    categories.value.push(res)
+    articles.value = loadPosts(res.filePath)
   })
-})
+}
 
-const gotoArticle = (articleCode) => {
-  router.push({path: `/blog/${articleCode}`})
+const gotoArticle = (articlePath) => {
+  articleStore.setCurrentArticle(articlePath)
+  router.push({path: "/blog"})
 }
 
 const handleSelect=(key, keyPath)=>{
-  console.log('Selected category code:', key, keyPath);
-  loadPosts(key);
+  articles.value=loadPosts(key);
 }
+
+onMounted(() => {
+  loadCategories()
+})
 
 </script>
 
@@ -44,27 +75,33 @@ const handleSelect=(key, keyPath)=>{
         @select="handleSelect"
         active-text-color="#f68b5d"
     >
-      <template v-for="category in categories" :key="category.code">
+      <template v-for="category in categories" :key="category.filePath">
         <category-menu-item :item="category"/>
       </template>
     </el-menu>
   </el-aside>
   <el-main>
-    <div class="va-table-responsive">
-      <table class="va-table va-table--clickable" style="width:100%;">
-        <tbody>
-        <tr
-            v-for="article in articles"
-            :key="article.code"
-            @click="gotoArticle(article.code)"
-        >
-          <td>{{ article.title }}</td>
-          <td>{{ article.tags }}</td>
-          <td>{{ article.time }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+    <template v-for="article in articles">
+      <el-card style="width: 70%" shadow="hover" @click="gotoArticle(article.filePath)">
+        <h2>{{ article.name }}</h2>
+        <p style="margin: 8px 0;color: #696c6c;font-size: 14px;font-family:Arial,sans-serif;line-height: 1.6;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;">{{ article.summary }}</p>
+        <p style="color: #696c6c;font-size: 10px;font-family:Arial,sans-serif;">Date {{ article.lastModified }}</p>
+      </el-card>
+    </template>
+<!--    <div class="va-table-responsive">-->
+<!--      <table class="va-table va-table&#45;&#45;clickable" style="width:100%;">-->
+<!--        <tbody>-->
+<!--        <tr-->
+<!--            v-for="article in articles"-->
+<!--            @click="gotoArticle(article.filePath)"-->
+<!--        >-->
+<!--          <td>{{ article.name }}</td>-->
+<!--          <td>{{ article.summary }}</td>-->
+<!--          <td>{{ article.lastModified }}</td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--      </table>-->
+<!--    </div>-->
   </el-main>
 </template>
 
