@@ -1,0 +1,1 @@
+import{i as r,J as c}from"./index-58b569e0.js";const s=t=>{let e="/api/article/list?category_code="+t;return r(e)},i=c("article",{state:()=>({currentArticle:null}),actions:{setCurrentArticle(t){this.currentArticle=t}}}),a=i();export{a,s as g};
