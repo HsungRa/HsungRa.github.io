@@ -2,136 +2,89 @@
 import "github-markdown-css/github-markdown.css"
 import "highlight.js/styles/atom-one-light.css"
 
+
 import {inject, nextTick, onMounted, ref} from 'vue';
 import Comment from '../components/Comment.vue'
 import {articleStore} from '../service/ArticleService.js'
-import {PostService} from "../service/PostService.js";
-
+import {parseMarkdownFile} from "../service/MarkdownService.js";
+import ArticleToc from "../components/ArticleToc.vue";
 
 
 const rightAsideConfig = inject("rightAsideConfig");
-const articlePath = articleStore.currentArticle;
+const currentArticle = articleStore.currentArticle;
 const markdownContent = ref('');
 const mdHeader = ref({})
 const commentNumber = ref('')
-
-// ========================================================================================================
 const mdRef = ref(null)
-const toc = ref([])
-const contentRef = ref(null)
-const directoryRef = ref(null)
-let directoryId = ref('')
+const tocItems = ref([]);
 
-//初始化目录树
-const directoryInit = (toc_list) => {
-  if (!toc_list.length) {
-    toc.value = [];
-    return;
-  }
-  const hTags = Array.from(new Set(toc_list.map((t) => t.name))).sort();
-  toc.value = toc_list.map((el) => ({
-    id: 'directory-' + el.id,
-    title: el.innerText,
-    lineIndex: el.id,
-    indent: hTags.indexOf(el.tagName)
-  }));
-}
-//目录点击事件
-const directoryClick = (anchor) => {
-  const {lineIndex} = anchor;
-  const heading = mdRef.value.$el.querySelector(`[data-v-md-heading="${lineIndex}"]`);
-  if (heading) {
-    removeScrollEventListener()
-    directoryId.value = anchor.id
-    mdRef.value.scrollToTarget({
-      target: heading,
-      scrollContainer: document.querySelector(".main-container"),
-      top: 60,
-    });
-    setTimeout(() => {
-      addScrollEventListener()
-    }, 200);
-  }
-}
-//滚动事件监听
-const scrollEventListener = () => {
-  let pixel = contentRef.value.$el.scrollTop + contentRef.value.$el.offsetTop + 1
-  const title = toc.value.reduce((prev, curr) => {
-    if (curr.pixel <= pixel && (prev === null || pixel - curr.pixel < pixel - prev.pixel)) {
-      return curr;
-    }
-    return prev;
-  }, null);
-  if (title) {
-    directoryRef.value.scrollTop = (directoryRef.value.scrollHeight * title.pixel) / contentRef.value.$el.scrollHeight
-    directoryId.value = title.id
-  }
-}
-//注册滚动事件
-const addScrollEventListener = () => {
-  contentRef.value.$el.addEventListener('scroll', scrollEventListener);
-}
-//销毁滚动事件
-const removeScrollEventListener = () => {
-  contentRef.value.$el.removeEventListener('scroll', scrollEventListener);
-}
 // ========================================================================================================
-onMounted( () => {
-  PostService.readLocalMarkdownFile(articlePath).then(res => {
-    console.log(">>>>>>>>>>>>>>>>>>>>>readMarkdownFile", res)
-    markdownContent.value = res
-  })
-  // getArticleDetail(articleCode).then(res => {
-  //   const article = res.data
-  //   mdHeader.value = {
-  //     title: article.title,
-  //     category_code: article.category_code,
-  //     category: article.category_name,
-  //     date: article.time,
-  //     readings: article.readings,
-  //     tags: []
-  //   }
-  //   commentNumber.value = article.comment_number
-  //   rightAsideConfig.value = article.article_toc
-  //   markdownContent.value = article.content
-  //   directoryInit(article.article_toc);
-  // })
+onMounted(() => {
+  parseMarkdownFile(currentArticle.filePath).then(res=>{
+    markdownContent.value = res.content
+    commentNumber.value = res.commentNumber
+    mdHeader.value = {
+      title: res.title,
+      date: res.date,
+      category: res.category,
+      readings: 0, //todo
+      tags: res.tags,
+    }
+    // 等待markdown渲染完成后生成目录
+    nextTick(() => {
+      generateToc();
+    });
+  });
 });
-nextTick(() => {
-  // addScrollEventListener();
-});
+// 解析标题生成目录树
+const generateToc = () => {
+  const content = mdRef.value.$el;
+  const headers = content.querySelectorAll('h1, h2, h3');
+  const items = [];
+
+  headers.forEach((header, index) => {
+    // 为每个标题添加id
+    const id = `header-${index}`;
+    header.id = id;
+
+    items.push({
+      id,
+      level: parseInt(header.tagName.charAt(1)),
+      text: header.textContent
+    });
+  });
+
+  tocItems.value = items;
+};
+
+
 </script>
 
 <template>
   <el-container class="page-container">
     <el-container>
       <el-main>
-<!--        <h1 class="title">{{ mdHeader.title }}</h1>-->
-<!--        <div class="meta">-->
-<!--          <div class="line">-->
-<!--            <div><strong>category: </strong> {{ mdHeader.category }}</div>-->
-<!--            <div><strong>date: </strong> {{ mdHeader.date }}</div>-->
-<!--            <div><strong>readings: </strong> {{ mdHeader.readings }}</div>-->
-<!--            <div>-->
-<!--              <strong>tags: </strong>-->
-<!--              <el-tag size="small" v-for="tag in mdHeader.tags" :key="tag">{{ tag }}</el-tag>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-        <div class="content" ref="contentRef">
+        <h1 class="title">{{ mdHeader.title }}</h1>
+        <div class="meta">
+          <div class="line">
+            <div><strong>category: </strong> {{ mdHeader.category }}</div>
+            <div><strong>date: </strong> {{ mdHeader.date }}</div>
+            <div>
+              <strong>tags: </strong>
+              <el-tag size="small" v-for="tag in mdHeader.tags" :key="tag">{{ tag }}</el-tag>
+            </div>
+          </div>
+        </div>
+        <div class="content">
           <v-md-preview :text="markdownContent" ref="mdRef"></v-md-preview>
         </div>
       </el-main>
       <el-aside class="el-aside-right">
-        <div ref="directoryRef" style="height: 100%">
-          <div v-for="anchor in toc" :key="anchor" :style="{ padding: `5px 0 5px ${anchor.indent * 20}px`,color: directoryId === anchor.id ? '#409eff' : 'black' }" @click="directoryClick(anchor)" class="directory-item" :id="anchor.id"  style="height: 100%">
-            {{ anchor.title }}
-          </div>
-        </div>
+        <ArticleToc :tocItems="tocItems"/>
       </el-aside>
     </el-container>
     <el-footer>
-      <Comment :commentNumber="commentNumber" :articleCode="articleCode"></Comment>
+      <Comment :commentNumber="commentNumber" v-if="commentNumber !== null && commentNumber!==undefined"></Comment>
     </el-footer>
   </el-container>
 </template>
@@ -183,8 +136,8 @@ nextTick(() => {
 }
 
 .el-aside-right {
-//background-color: #2f323c;
-  color:white;
+  //background-color: #2f323c;
+  color: white;
   width: 12%;
   display: block;
   position: absolute;

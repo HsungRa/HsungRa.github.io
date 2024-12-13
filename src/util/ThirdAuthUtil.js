@@ -25,7 +25,7 @@ export const getAuthUser = ()=>{
     return JSON.parse(get(_auth_key));
 }
 
-export const checkSignIn = (authSuccess) => {
+export const authCheck = (authSuccess) => {
     const authUser = getAuthUser()
     if (authUser !=null) {
         if (authSuccess) {

@@ -33,21 +33,17 @@ import {
   addComment,
   loadComment,
 } from '../service/CommentService.js';
-import {getAuthUser, checkSignIn,} from "../util/ThirdAuthUtil.js";
+import {getAuthUser, authCheck,} from "../util/ThirdAuthUtil.js";
 import CommentItem from "./CommentItem.vue";
 import {CloseCircleOutlined} from '@ant-design/icons-vue';
 
 export default {
   components: {CommentItem, CloseCircleOutlined,},
   props: {
-    articleCode: {
-      type: String,
-      required: true
-    },
     commentNumber: {
       type: String,
       required: true
-    },
+    }
   },
   data() {
     return {
@@ -56,6 +52,7 @@ export default {
       comments: [],
       showReplyForm: -1,
       submitting: true,
+      authUser: null,
       userAvatar: "/logo.jpg",
     };
   },
@@ -84,28 +81,32 @@ export default {
       if (this.commentText == null || this.commentText.trim().length === 0) {
         alert("请输入评论内容");
       }
-      checkSignIn((authUser)=>{
-        this.userAvatar = authUser.photoURL
+      authCheck((authUser)=>{
+        this.authUser = authUser
         let comment = this.commentText.replace('>','&gt;')
         if (this.replyTo != null) {
           comment = `> ${this.replyTo}\r\n\r\n${comment}`
         }
-        addComment(authUser, this.commentNumber, comment.trim()).then((res) => {
+        addComment(this.authUser, this.commentNumber, comment.trim()).then((res) => {
+          if (null===res){
+            return;
+          }
           this.commentText = '';
-          loadComment(this.articleCode).then((res) => {
-            this.comments = res.data.root.children
+          loadComment(this.commentNumber).then((res) => {
+            this.comments = res.root.children
           });
         });
       });
     },
   },
   mounted() {
-    loadComment(this.articleCode).then((res) => {
-      this.comments = res.data.root.children
-    });
-    const authUser = getAuthUser()
-    if (authUser != null) {
-      this.userAvatar = authUser.photoURL
+    this.authUser = getAuthUser()
+    if (this.authUser !== null && this.commentNumber!==null && this.commentNumber!==undefined) {
+      loadComment(this.commentNumber).then((res) => {
+        if (res !== null){
+          this.comments = res.root.children
+        }
+      });
     }
   },
 };

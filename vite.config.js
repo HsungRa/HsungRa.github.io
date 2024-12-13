@@ -2,11 +2,19 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import {NodeGlobalsPolyfillPlugin} from '@esbuild-plugins/node-globals-polyfill'
 import nodePolyfills from 'vite-plugin-node-stdlib-browser'
+import prismjs from 'vite-plugin-prismjs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
     base: '/',
-    plugins: [vue(),nodePolyfills()],
+    plugins: [
+        vue(),
+        nodePolyfills(),
+        prismjs({
+            // languages: ['json'],
+            languages: 'all',
+        }),
+    ],
     resolve: {
         alias: {
             'vue': 'vue/dist/vue.esm-bundler.js',

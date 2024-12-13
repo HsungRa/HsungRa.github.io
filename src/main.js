@@ -27,18 +27,31 @@ import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/
 // 快速复制代码
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
+// 数学公式
+import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn';
+// todo-list
+import createTodoListPlugin from '@kangc/v-md-editor/lib/plugins/todo-list/index';
+import '@kangc/v-md-editor/lib/plugins/todo-list/todo-list.css';
+// 内容定位
+import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
+
 // ===========================Markdown end ===========================
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 // ===========================pinia ===========================
-import { createPinia } from 'pinia'
+import {createPinia} from 'pinia'
+
 const pinia = createPinia()
 
-
-VMdPreview.use(vuepressTheme, {
-    Prism,
-}).use(createEmojiPlugin()).use(createMermaidPlugin()).use(createLineNumbertPlugin()).use(createCopyCodePlugin());
-
+VMdPreview
+    .use(vuepressTheme, {Prism,})
+    .use(createEmojiPlugin())
+    .use(createMermaidPlugin())
+    .use(createLineNumbertPlugin())
+    .use(createCopyCodePlugin())
+    .use(createKatexPlugin())
+    .use(createTodoListPlugin())
+    .use(createAlignPlugin());
 
 const fonts = [
     {

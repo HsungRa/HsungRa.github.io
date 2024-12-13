@@ -1,6 +1,33 @@
-import matter from "gray-matter";
+import {httpGet} from '../util/HttpUtil.js'
+import {get} from "../util/StorageUtil.js";
 
-export class PostService {
+const config = (token) => {
+    return {
+        Authorization: `Bearer ${token}`,
+    }
+};
+
+export class TestPostService {
+    /**
+     * 从指定的 GitHub 仓库读取 markdown 文件内容
+     * @param {string} owner - 仓库所有者
+     * @param {string} repo - 仓库名称
+     * @param {string} path - 文件路径
+     * @param {string} branch - 分支名称，默认为 'main'
+     * @returns {Promise<string>} markdown 文件内容
+     */
+    static readMarkdownFile(owner, repo, path, branch = 'main') {
+        // 构建 GitHub API URL
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+        const commentBy = JSON.parse(get('auth_user'));
+        return new Promise((resolve, reject) => {
+            httpGet(url, null, config(commentBy.accessToken), '').then((data) => {
+                // GitHub API 返回的内容是 Base64 编码的
+                const content = Buffer.from(data.content, 'base64').toString('utf-8');
+                resolve(content);
+            })
+        });
+    }
 
     /**
      * 从本地文件系统读取 markdown 文件
@@ -9,6 +36,10 @@ export class PostService {
      */
     static readLocalMarkdownFile(filePath) {
         return new Promise((resolve, reject) => {
+            // `/public/${filePath}?raw`
+            // import(`/public/${filePath}?raw`).then((content) => {
+            //     resolve(content.default);
+            // });
             fetch(`/${filePath}`).then((response) => {
                 if (response.ok) {
                     resolve(response.text());
@@ -22,10 +53,70 @@ export class PostService {
 
 
     /**
+     * 获取指定 GitHub 仓库目录的文件树结构
+     * @param {string} owner - 仓库所有者
+     * @param {string} repo - 仓库名称
+     * @param {string} path - 起始路径，默认为根目录
+     * @param {string} branch - 分支名称，默认为 'main'
+     * @returns {Promise<Object>} 目录树结构
+     */
+    static getDirectoryTree(owner, repo, path = '', branch = 'main') {
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+        const commentBy = JSON.parse(get('auth_user'));
+        return new Promise((resolve, reject) => {
+            httpGet(url, null, config(commentBy.accessToken), '').then((data) => {
+                // 创建当前目录的结构
+                const result = {
+                    name: path || 'root',
+                    posts: [],
+                    children: []
+                };
+
+                // 遍历响应内容
+                for (const item of data) {
+                    if (item.type === 'file') {
+                        // 如果是文件，添加到 posts 数组
+                        result.posts.push(item.name);
+                    } else if (item.type === 'dir') {
+                        // 如果是目录，递归获取子目录结构
+                        const subPath = path ? `${path}/${item.name}` : item.name;
+                        this.getDirectoryTree(owner, repo, subPath, branch).then((subTree) => {
+                            result.children.push(subTree);
+                        });
+                    }
+                }
+                resolve(result);
+            }).catch((reason) => {
+                reject(new Error(reason || "Unknown error occurred."));
+            })
+
+        });
+    }
+
+
+    /**
+     * 获取本地目录的文件树结构（需要后端支持）
+     * @param {string} basePath - 基础路径
+     * @returns {Promise<Object>} 目录树结构
+     */
+    static getLocalDirectoryTree1(basePath) {
+        return new Promise((resolve, reject) => {
+            fetch(`/api/directory-tree?path=${encodeURIComponent(basePath)}`).then((response) => {
+                if (response.ok) {
+                    resolve(response.json());
+                }else {
+                    reject(`fetch error! status: ${response.status}`);
+                }
+            })
+        });
+    }
+
+
+    /**
      * 获取本地目录的文件树结构
      * @returns {Promise<Object>} 目录树结构
      */
-    static getLocalDirectoryTree1() {
+    static getLocalDirectoryTree() {
         return new Promise((resolve, reject) => {
             // 使用 Vite 的 glob 导入功能
             const files = import.meta.glob('/public/posts/**/*.md', { eager: true });
@@ -107,108 +198,6 @@ export class PostService {
         );
 
         return filtered;
-    }
-
-
-    static async getLocalDirectoryTree() {
-        try {
-
-            const files = import.meta.glob('/public/posts/**/*.md', {
-                eager: true,
-                as: 'raw'  // 获取原始内容
-            });
-
-            // 创建根目录结构
-            const tree = {
-                name: 'posts',
-                filePath: 'posts',
-                posts: [],
-                children: {}
-            };
-
-            for (const filePath in files) {
-                const content = files[filePath];
-                const relativePath = filePath.replace('/public/posts/', '');
-                const pathParts = relativePath.split('/');
-
-                // 解析文件内容，获取 frontmatter 和正文
-                const { data: frontmatter, content: fileContent } = matter(content);
-                // 创建文件信息对象
-                const fileInfo = {
-                    name: pathParts[pathParts.length - 1],
-                    filePath: `posts/${relativePath}`,
-                    lastModified: frontmatter.date || new Date().toISOString(), // 优先使用 frontmatter 中的日期
-                    summary: this.generateSummary(fileContent)
-                };
-                if (pathParts.length === 1) {
-                    // 根目录下的文件
-                    tree.posts.push(fileInfo);
-                } else {
-                    // 子目录中的文件
-                    let currentLevel = tree.children;
-                    let currentPath = 'posts';
-
-                    for (let i = 0; i < pathParts.length - 1; i++) {
-                        const part = pathParts[i];
-                        currentPath = `${currentPath}/${part}`;
-                        if (!currentLevel[part]) {
-                            currentLevel[part] = {
-                                name: part,
-                                filePath: currentPath,
-                                posts: [],
-                                children: {}
-                            };
-                        }
-                        if (i === pathParts.length - 2) {
-                            // 最后一个目录，添加文件
-                            currentLevel[part].posts.push(fileInfo);
-                        } else {
-                            currentLevel = currentLevel[part].children;
-                        }
-                    }
-                }
-            }
-
-            // 将 children 对象转换为数组
-            const convertChildrenToArray = (node) => {
-                return Object.values(node.children).map(child => {
-                    return {
-                        ...child,
-                        children: convertChildrenToArray(child)
-                    };
-                });
-            };
-
-            return {
-                ...tree,
-                children: convertChildrenToArray(tree)
-            };
-        } catch (error) {
-            console.error('获取本地目录树失败:', error);
-            throw new Error('无法获取目录树');
-        }
-    }
-
-    /**
-     * 生成文章摘要
-     * @param {string} content - 文章内容
-     * @param {number} length - 摘要长度，默认200字符
-     * @returns {string} 文章摘要
-     */
-    static generateSummary(content, length = 200) {
-        // 移除 Markdown 语法
-        let plainText = content
-            .replace(/#+\s/g, '')  // 移除标题
-            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // 将链接转换为纯文本
-            .replace(/[*_~`]/g, '')  // 移除强调符号
-            .replace(/\n/g, ' ')  // 将换行转换为空格
-            .replace(/\s+/g, ' ')  // 将多个空格合并为一个
-            .trim();
-
-        // 截取指定长度
-        return plainText.length > length
-            ? plainText.slice(0, length) + '...'
-            : plainText;
     }
 }
 

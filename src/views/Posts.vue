@@ -28,12 +28,7 @@ const loadPosts = (path) => {
     if (!directory) {
       return []
     }
-    /**
-     * name: pathParts[pathParts.length - 1],
-     *                     filePath: `posts/${relativePath}`,
-     *                     lastModified: frontmatter.date || new Date().toISOString(), // 优先使用 frontmatter 中的日期
-     *                     summary: this.generateSummary(fileContent)
-     */
+
     return directory.posts.map(md => {
       md.name = md.name.replace('.md', '')
       return md
@@ -47,18 +42,21 @@ const loadPosts = (path) => {
 const loadCategories = () => {
   PostService.getLocalDirectoryTree().then(res => {
     console.log(res)
-    categories.value.push(res)
-    articles.value = loadPosts(res.filePath)
+    categories.value=res.children
+    if (categories.value.length > 0) {
+      console.log(categories.value)
+      articles.value = loadPosts(categories.value[0].filePath)
+    }
   })
 }
 
-const gotoArticle = (articlePath) => {
-  articleStore.setCurrentArticle(articlePath)
+const gotoArticle = (article) => {
+  articleStore.setCurrentArticle(article)
   router.push({path: "/blog"})
 }
 
-const handleSelect=(key, keyPath)=>{
-  articles.value=loadPosts(key);
+const handleSelect = (key, keyPath) => {
+  articles.value = loadPosts(key);
 }
 
 onMounted(() => {
@@ -68,7 +66,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-aside class="el-aside-left" >
+  <el-aside class="el-aside-left">
     <el-menu
         :default-active="$route.path"
         class="category-menu"
@@ -82,26 +80,13 @@ onMounted(() => {
   </el-aside>
   <el-main>
     <template v-for="article in articles">
-      <el-card style="width: 70%" shadow="hover" @click="gotoArticle(article.filePath)">
+      <el-card style="width: 70%" shadow="hover" @click="gotoArticle(article)">
         <h2>{{ article.name }}</h2>
-        <p style="margin: 8px 0;color: #696c6c;font-size: 14px;font-family:Arial,sans-serif;line-height: 1.6;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;">{{ article.summary }}</p>
+        <p style="margin: 8px 0;color: #696c6c;font-size: 14px;font-family:Arial,sans-serif;line-height: 1.6;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;">
+          {{ article.summary }}</p>
         <p style="color: #696c6c;font-size: 10px;font-family:Arial,sans-serif;">Date {{ article.lastModified }}</p>
       </el-card>
     </template>
-<!--    <div class="va-table-responsive">-->
-<!--      <table class="va-table va-table&#45;&#45;clickable" style="width:100%;">-->
-<!--        <tbody>-->
-<!--        <tr-->
-<!--            v-for="article in articles"-->
-<!--            @click="gotoArticle(article.filePath)"-->
-<!--        >-->
-<!--          <td>{{ article.name }}</td>-->
-<!--          <td>{{ article.summary }}</td>-->
-<!--          <td>{{ article.lastModified }}</td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--      </table>-->
-<!--    </div>-->
   </el-main>
 </template>
 
