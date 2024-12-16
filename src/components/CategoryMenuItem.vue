@@ -3,7 +3,7 @@
     <!-- 父级分类 -->
     <el-sub-menu :index="item.filePath">
       <template #title>
-        <span>{{ item.name }}</span>
+        <h3>{{ item.name }}</h3>
       </template>
       <template v-for="subItem in item.children" :key="subItem.filePath">
         <category-menu-item :item="subItem" />
@@ -11,9 +11,8 @@
     </el-sub-menu>
   </template>
   <template v-else>
-    <!-- 子分类 :index="`/${ROUTER_BLOG_PANEL}/${item.code}`"-->
     <el-menu-item :index="item.filePath">
-      {{ item.name }}
+      <h3>{{ item.name }}</h3>
     </el-menu-item>
   </template>
 </template>

@@ -1,4 +1,4 @@
-import {createApp} from 'vue'
+import {createApp, toRaw} from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
@@ -39,9 +39,37 @@ import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 // ===========================pinia ===========================
-import {createPinia} from 'pinia'
+import { createPinia, } from 'pinia'
+// =========================Google Analytics============================================
+import VueGtag from 'vue-gtag-next'
+
 
 const pinia = createPinia()
+// 数据存储本地
+const setStorage = (key, value) => {
+    localStorage.setItem(key, JSON.stringify(value))
+}
+// 获取本地数据
+const getStorage = (key) => {
+    const data = localStorage.getItem(key)
+    return data ? JSON.parse(data) : {};
+}
+
+const piniaPlugin = (context) => {
+    const { store } = context;
+    // $subscribe state值发生变化时会执行传入的回调
+    store.$subscribe(() => {
+        // 每次修改值的时候更新localStorage数据
+        setStorage(`pinia-${store.$id}`, toRaw(store.$state))
+    })
+    // 每次构建项目的时候从本地存储取值 并将取的值赋给state
+    const data = getStorage(`pinia-${store.$id}`)
+    return {
+        ...data
+    }
+}
+
+pinia.use(piniaPlugin)
 
 VMdPreview
     .use(vuepressTheme, {Prism,})
@@ -60,6 +88,8 @@ const fonts = [
     }
 ]
 
+
+// 配置 GA
 const app = createApp(App)
 app.use(router).use(ElementPlus).use(createVuestic(
     {
@@ -83,4 +113,10 @@ app.use(router).use(ElementPlus).use(createVuestic(
 
         },
     }
-)).use(VMdPreview).use(Antd).use(pinia).mount('#app')
+)).use(VMdPreview).use(Antd).use(pinia).use(VueGtag, {
+    property: {
+        id: 'G-PQ4ZMJM56D' // 替换成你的 GA4 测量 ID
+    },
+    enabled: true, // 是否启用
+    router // 自动跟踪路由变化
+}).mount('#app')

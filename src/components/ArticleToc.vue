@@ -5,7 +5,10 @@
       <div v-for="(item, index) in tocItems" :key="index"
            :class="['toc-item', `level-${item.level}`]"
            @click="scrollToHeader(item.id)">
-        {{ item.text }}
+        <h4 v-if="item.level === 1">{{ item.text }}</h4>
+        <h5 v-else-if="item.level === 2">{{ item.text }}</h5>
+        <h6 v-else-if="item.level === 3">{{ item.text }}</h6>
+        <p v-else>{{ item.text }}</p>
       </div>
     </div>
   </div>

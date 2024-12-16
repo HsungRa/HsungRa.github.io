@@ -1,26 +1,27 @@
 <script setup>
 import "github-markdown-css/github-markdown.css"
 import "highlight.js/styles/atom-one-light.css"
-
-
-import {inject, nextTick, onMounted, ref} from 'vue';
+import {inject, nextTick, onMounted, onUnmounted, ref} from 'vue';
 import Comment from '../components/Comment.vue'
-import {articleStore} from '../service/ArticleService.js'
-import {parseMarkdownFile} from "../service/MarkdownService.js";
-import ArticleToc from "../components/ArticleToc.vue";
+import {parseMarkdownFile} from "../service/ArticleService.js";
+import {Types} from "../util/LeftAsideType.js";
+import {useRouter} from "vue-router";
+import {analyticsService} from "../service/AnalyticsService.js";
+import {deterministicHash} from "../util/CryptoUtils.js";
 
+const globalConfig = inject("globalConfig");
+const {currentRoute} = useRouter();
+const route = currentRoute.value;
+const articleKey = route.params.articleKey
 
-const rightAsideConfig = inject("rightAsideConfig");
-const currentArticle = articleStore.currentArticle;
 const markdownContent = ref('');
 const mdHeader = ref({})
 const commentNumber = ref('')
 const mdRef = ref(null)
-const tocItems = ref([]);
-
-// ========================================================================================================
+let stopTrackingReadTime;
+const articleId = deterministicHash(articleKey);
 onMounted(() => {
-  parseMarkdownFile(currentArticle.filePath).then(res=>{
+  parseMarkdownFile(`${articleKey.replace(/-/g, "/")}.md`).then(res => {
     markdownContent.value = res.content
     commentNumber.value = res.commentNumber
     mdHeader.value = {
@@ -32,10 +33,42 @@ onMounted(() => {
     }
     // 等待markdown渲染完成后生成目录
     nextTick(() => {
+      analyticsService.trackArticleView(articleId, mdHeader.value.title, mdHeader.value.category, mdHeader.value.tags)
       generateToc();
     });
-  });
+  })
+  // 开始跟踪阅读时间
+  stopTrackingReadTime = analyticsService.startTrackingReadTime(articleId)
+
+  // 添加滚动监听
+  window.addEventListener('scroll', handleScroll)
 });
+
+onUnmounted(() => {
+  // 停止跟踪阅读时间
+  if (stopTrackingReadTime) {
+    stopTrackingReadTime()
+  }
+
+  // 移除滚动监听
+  window.removeEventListener('scroll', handleScroll)
+});
+
+// 处理滚动事件
+const handleScroll = () => {
+  analyticsService.trackUserAction('scroll', {
+    article_id: currentArticle.id,
+    scroll_percentage: calculateScrollPercentage()
+  })
+}
+
+// 计算阅读进度
+const calculateScrollPercentage = () => {
+  const scrollTop = window.pageYOffset
+  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
+  return Math.round((scrollTop / scrollHeight) * 100)
+}
+
 // 解析标题生成目录树
 const generateToc = () => {
   const content = mdRef.value.$el;
@@ -53,45 +86,36 @@ const generateToc = () => {
       text: header.textContent
     });
   });
-
-  tocItems.value = items;
+  globalConfig.leftAsideConfig.show = true;
+  globalConfig.leftAsideConfig.type = Types.ARTICLE_TOC;
+  globalConfig.leftAsideConfig.args = items;
 };
 
-
 </script>
-
 <template>
-  <el-container class="page-container">
-    <el-container>
-      <el-main>
-        <h1 class="title">{{ mdHeader.title }}</h1>
-        <div class="meta">
-          <div class="line">
-            <div><strong>category: </strong> {{ mdHeader.category }}</div>
-            <div><strong>date: </strong> {{ mdHeader.date }}</div>
-            <div>
-              <strong>tags: </strong>
-              <el-tag size="small" v-for="tag in mdHeader.tags" :key="tag">{{ tag }}</el-tag>
-            </div>
-          </div>
+  <div class="page-container" style="width:73%;float:left">
+    <h1 class="title">{{ mdHeader.title }}</h1>
+    <div class="meta">
+      <div class="line">
+        <div><strong>category: </strong> {{ mdHeader.category }}</div>
+        <div><strong>date: </strong> {{ mdHeader.date }}</div>
+        <div>
+          <strong>tags: </strong>
+          <el-tag size="small" v-for="tag in mdHeader.tags" :key="tag">{{ tag }}</el-tag>
         </div>
-        <div class="content">
-          <v-md-preview :text="markdownContent" ref="mdRef"></v-md-preview>
-        </div>
-      </el-main>
-      <el-aside class="el-aside-right">
-        <ArticleToc :tocItems="tocItems"/>
-      </el-aside>
-    </el-container>
-    <el-footer>
+      </div>
+    </div>
+    <div class="content">
+      <v-md-preview :text="markdownContent" ref="mdRef"/>
+    </div>
+    <div style="clear:both;">
       <Comment :commentNumber="commentNumber" v-if="commentNumber !== null && commentNumber!==undefined"></Comment>
-    </el-footer>
-  </el-container>
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .page-container {
-  width: 100%;
   margin: 0 auto;
   padding: 20px;
 }
@@ -133,18 +157,5 @@ const generateToc = () => {
 .content {
   font-size: 16px;
   width: 100%;
-}
-
-.el-aside-right {
-  //background-color: #2f323c;
-  color: white;
-  width: 12%;
-  display: block;
-  position: absolute;
-  right: 0;
-  top: 60px;
-  bottom: 0;
-  margin-left: 88%;
-  height: 100%;
 }
 </style>

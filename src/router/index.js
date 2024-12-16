@@ -27,15 +27,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ '../views/DemoPage.vue')
     },
     {
-        path: `/${ROUTER_BLOG}`,
+        path: `/${ROUTER_BLOG}/:articleKey`,
         name: ROUTER_BLOG,
         component: () => import(/* webpackChunkName: "about" */ '../views/ArticleDetail.vue')
     },
     {
-        path: `/${ROUTER_BLOG_PANEL}/:categoryCode`,
-        name: ROUTER_BLOG_PANEL,
-        component: () => import(/* webpackChunkName: "about" */ '../views/ArticleList.vue')
-    },{
         path: `/${ROUTER_CATEGORY}/:code`,
         name: ROUTER_CATEGORY,
         component: () => import(/* webpackChunkName: "about" */ '../views/CategoryList.vue')

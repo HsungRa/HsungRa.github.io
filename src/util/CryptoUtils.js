@@ -120,10 +120,10 @@ export const generateKey = (length = 32) => {
  * @param {number} [iterations=10000] - 哈希迭代次数
  * @returns {string} 64字符的哈希值
  */
-export const hash = (text, salt = this.generateKey(16), iterations = 10000) => {
+export const hash = (text, salt = generateKey(16), iterations = 10000) => {
     try {
         // 使用提供的盐值或生成新的盐值
-        const currentSalt = salt || this.generateKey(16);
+        const currentSalt = salt || generateKey(16);
         // 将文本和盐值组合
         let combined = text + currentSalt;
         // 首先使用 SHA3-512
@@ -143,7 +143,7 @@ export const hash = (text, salt = this.generateKey(16), iterations = 10000) => {
                     break;
                 case 3:
                     // 在部分迭代中加入额外的盐值
-                    const extraSalt = this.generateKey(8);
+                    const extraSalt = generateKey(8);
                     hash = CryptoJS.HmacSHA512(hash, extraSalt);
                     break;
             }
@@ -171,7 +171,7 @@ export const hash = (text, salt = this.generateKey(16), iterations = 10000) => {
  */
 export const verifyHash = (text, hash, salt, iterations = 10000) => {
     try {
-        const computedHash = this.hash(text, salt, iterations);
+        const computedHash = hash(text, salt, iterations);
         return computedHash.hash === hash;
     } catch (error) {
         console.error('哈希验证失败:', error);
@@ -189,7 +189,7 @@ export const deterministicHash = (text) => {
         // 使用固定的盐值和较少的迭代次数
         const fixedSalt = 'bK#9$mP2@qL5';
         const iterations = 1000;
-        return this.hash(text, fixedSalt, iterations).hash;
+        return hash(text, fixedSalt, iterations).hash;
     } catch (error) {
         console.error('确定性哈希生成失败:', error);
         throw new Error('确定性哈希生成失败');

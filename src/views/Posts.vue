@@ -1,113 +1,150 @@
 <script setup>
 import {useRouter} from 'vue-router'
-import {onMounted, ref} from "vue";
+import {inject, onBeforeUnmount, onMounted, ref} from "vue";
 import {PostService} from '../service/PostService.js'
-import {articleStore} from '../service/ArticleService.js'
-import CategoryMenuItem from "../components/CategoryMenuItem.vue";
+import {Types} from "../util/LeftAsideType.js";
+import {Events, subscribeEvent, unsubscribeEvent} from '../util/bus.js';
 
 const router = useRouter();
 const categories = ref([])
+const globalConfig = inject("globalConfig");
 const articles = ref([])
-
-const loadPosts = (path) => {
-  try {
-    if (!categories.value[0]) {
-      return
-    }
-    const findDirectory = (tree, targetPath) => {
-      if (tree.filePath === targetPath) {
-        return tree;
-      }
-      for (const child of tree.children) {
-        const found = findDirectory(child, targetPath);
-        if (found) return found;
-      }
-      return null;
-    };
-    const directory = findDirectory(categories.value[0], path);
-    if (!directory) {
-      return []
-    }
-
-    return directory.posts.map(md => {
-      md.name = md.name.replace('.md', '')
-      return md
-    });
-  } catch (error) {
-    console.error('获取文件列表失败:', error);
-    throw new Error(`无法获取目录 ${path} 下的文件`);
-  }
-}
 
 const loadCategories = () => {
   PostService.getLocalDirectoryTree().then(res => {
-    console.log(res)
-    categories.value=res.children
+    categories.value = res.children
     if (categories.value.length > 0) {
-      console.log(categories.value)
-      articles.value = loadPosts(categories.value[0].filePath)
+      globalConfig.leftAsideConfig.show = true;
+      globalConfig.leftAsideConfig.type = Types.POSTS_CATEGORY_MENU;
+      globalConfig.leftAsideConfig.args = categories.value;
     }
   })
 }
 
-const gotoArticle = (article) => {
-  articleStore.setCurrentArticle(article)
-  router.push({path: "/blog"})
-}
-
-const handleSelect = (key, keyPath) => {
-  articles.value = loadPosts(key);
+const gotoArticle = (articleFilePath) => {
+  router.push({path: `/blog/${articleFilePath.replace('.md','').replace(/\//g, "-")}`})
 }
 
 onMounted(() => {
-  loadCategories()
+  loadCategories();
+  subscribeEvent(Events.LOAD_ARTICLE_SUMMARY_LIST, (eventData) => {
+    articles.value = eventData;
+  });
+})
+
+onBeforeUnmount(()=>{
+  unsubscribeEvent(Events.LOAD_ARTICLE_SUMMARY_LIST)
 })
 
 </script>
 
 <template>
-  <el-aside class="el-aside-left">
-    <el-menu
-        :default-active="$route.path"
-        class="category-menu"
-        @select="handleSelect"
-        active-text-color="#f68b5d"
-    >
-      <template v-for="category in categories" :key="category.filePath">
-        <category-menu-item :item="category"/>
-      </template>
-    </el-menu>
-  </el-aside>
-  <el-main>
-    <template v-for="article in articles">
-      <el-card style="width: 70%" shadow="hover" @click="gotoArticle(article)">
-        <h2>{{ article.name }}</h2>
-        <p style="margin: 8px 0;color: #696c6c;font-size: 14px;font-family:Arial,sans-serif;line-height: 1.6;overflow: hidden;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;">
-          {{ article.summary }}</p>
-        <p style="color: #696c6c;font-size: 10px;font-family:Arial,sans-serif;">Date {{ article.lastModified }}</p>
-      </el-card>
-    </template>
-  </el-main>
+  <div class="article-list-container">
+    <div class="article-list">
+      <div v-for="article in articles"
+           :key="article.filePath"
+           class="article-item"
+           @click="gotoArticle(article.filePath)">
+        <div class="article-title">{{ article.name }}</div>
+        <div class="article-meta">
+          <span class="date">{{ article.lastModified }}</span>
+<!--          <div class="tags">-->
+<!--            <el-tag v-for="tag in article.tags"-->
+<!--                    :key="tag"-->
+<!--                    size="small"-->
+<!--                    effect="plain">-->
+<!--              {{ tag }}-->
+<!--            </el-tag>-->
+<!--          </div>-->
+        </div>
+        <div class="article-summary">{{ article.summary }}</div>
+<!--        <div class="article-footer">-->
+<!--          <span class="reading-time">预计阅读时间: {{ article.readingTime }}分钟</span>-->
+<!--          <span class="views">阅读量: {{ article.views }}</span>-->
+<!--        </div>-->
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.el-main {
-  //background-color: #2f323c;
-  width: 88%;
-  position: absolute;
-  left: 12%;
-  top: 60px;
-  bottom: 0;
-  overflow-y: scroll;
+.article-list-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.el-aside-left {
-  //background-color: #2f323c;
-  width: 12%;
-  display: block;
-  position: absolute;
-  margin-left: 0;
-  top: 60px;
-  bottom: 0;
+.category-header {
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #23e066;
+}
+
+.category-header h1 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.category-meta {
+  color: #666;
+  font-size: 14px;
+}
+
+.article-item {
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.article-item:hover {
+  transform: translateY(-3px);
+}
+
+.article-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.article-meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.date {
+  color: #666;
+  margin-right: 15px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+}
+
+.article-summary {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.article-footer {
+  display: flex;
+  justify-content: space-between;
+  color: #999;
+  font-size: 12px;
+}
+
+.reading-time, .views {
+  display: flex;
+  align-items: center;
 }
 </style>

@@ -1,59 +1,64 @@
 <template>
-<!--        background-color="#2f323c"
-      text-color="#e4e8ec"-->
   <el-menu
       :default-active="$route.path"
       class="category-menu"
       @select="handleSelect"
       active-text-color="#f68b5d"
-      :router="true"
   >
-    <template v-for="category in categories" :key="category.code">
+    <template v-for="category in categories" :key="category.filePath">
       <category-menu-item :item="category"/>
     </template>
   </el-menu>
 </template>
 
-<script>
+<script setup>
 import CategoryMenuItem from './CategoryMenuItem.vue';
-import {getCategoryList} from "../service/CategoryService.js";
+import {onMounted} from "vue";
+import {Events, publishEvent} from "../util/bus.js";
 
-export default {
-  // inject:['reload'],
-  components: {CategoryMenuItem},
-  props: {
-    // categories: {
-    //   type: Array,
-    //   required: true,
-    // },
+const props = defineProps({
+  categories: {
+    required: true,
   },
-  data() {
-    return {
-      categories: [], // 分类数据
-      activeMenu: '', // 当前选中的菜单项
-    };
-  },
-  created() {
+});
 
-  },
-  methods: {
-    fetchCategories() {
-      getCategoryList().then((data) => {
-        this.categories = data.data
-      })
-    },
-    handleSelect(key, keyPath) {
-      console.log('Selected category code:', key, keyPath);
-      // this.$router.push({name: ROUTER_BLOG_PANEL, params: {categoryCode: key}});
-      // this.activeMenu = key;
-      // this.reload()
-    },
-  },
-  mounted() {
-    this.fetchCategories();
+const handleSelect = (key, keyPath) => {
+  const articles = loadPosts(key);
+  publishEvent(Events.LOAD_ARTICLE_SUMMARY_LIST, articles);
+
+}
+
+const loadPosts = (path) => {
+  if (!props.categories[0]) {
+    return
   }
-};
+  const findDirectory = (tree, targetPath) => {
+    if (tree.filePath === targetPath) {
+      return tree;
+    }
+    for (const child of tree.children) {
+      const found = findDirectory(child, targetPath);
+      if (found) return found;
+    }
+    return null;
+  };
+  const directory = findDirectory(props.categories[0], path);
+  if (!directory) {
+    return []
+  }
+
+  return directory.posts.map(md => {
+    md.name = md.name.replace('.md', '')
+    return md
+  });
+}
+
+onMounted(() => {
+  const articles = loadPosts(props.categories[0].filePath);
+  publishEvent(Events.LOAD_ARTICLE_SUMMARY_LIST, articles);
+})
 </script>
+
 <style scoped>
 .category-menu {
   height: 100%;

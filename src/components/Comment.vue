@@ -33,9 +33,10 @@ import {
   addComment,
   loadComment,
 } from '../service/CommentService.js';
-import {getAuthUser, authCheck,} from "../util/ThirdAuthUtil.js";
+import {authCheck,} from "../util/ThirdAuthUtil.js";
 import CommentItem from "./CommentItem.vue";
 import {CloseCircleOutlined} from '@ant-design/icons-vue';
+import {authInfo} from "../util/StorageUtil.js";
 
 export default {
   components: {CommentItem, CloseCircleOutlined,},
@@ -100,7 +101,7 @@ export default {
     },
   },
   mounted() {
-    this.authUser = getAuthUser()
+    this.authUser = authInfo.user
     if (this.authUser !== null && this.commentNumber!==null && this.commentNumber!==undefined) {
       loadComment(this.commentNumber).then((res) => {
         if (res !== null){

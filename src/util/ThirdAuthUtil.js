@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import {getAuth, signInWithPopup, GithubAuthProvider} from "firebase/auth";
-import {get, put} from "./StorageUtil.js"
+import {authInfo} from "./StorageUtil.js"
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
@@ -17,16 +17,9 @@ const app = initializeApp(firebaseConfig);
 const provider = new GithubAuthProvider();
 provider.addScope('repo');
 const auth = getAuth(app);
-const _auth_key = 'auth_user'
-export const getAuthUser = ()=>{
-    if (null == get(_auth_key)) {
-        return null;
-    }
-    return JSON.parse(get(_auth_key));
-}
 
 export const authCheck = (authSuccess) => {
-    const authUser = getAuthUser()
+    const authUser = authInfo.user
     if (authUser !=null) {
         if (authSuccess) {
             authSuccess(authUser);
@@ -44,7 +37,7 @@ export const authCheck = (authSuccess) => {
                 photoURL: user.photoURL,
                 accessToken: credential.accessToken
             }
-            put(_auth_key, authUser)
+            authInfo.setAuthUser(authUser)
             if (authSuccess) {
                 authSuccess(authUser);
             }
