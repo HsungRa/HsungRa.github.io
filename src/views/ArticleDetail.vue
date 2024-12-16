@@ -33,7 +33,7 @@ onMounted(() => {
     }
     // 等待markdown渲染完成后生成目录
     nextTick(() => {
-      analyticsService.trackArticleView(articleId, mdHeader.value.title, mdHeader.value.category, mdHeader.value.tags)
+      analyticsService.trackArticleView(articleId, mdHeader.value.title)
       generateToc();
     });
   })

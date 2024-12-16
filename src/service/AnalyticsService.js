@@ -12,13 +12,11 @@ export const analyticsService = {
     },
 
     // 跟踪文章阅读
-    trackArticleView(articleId, articleTitle, articleCategory, articleTags) {
+    trackArticleView(articleId, articleTitle) {
         const { event } = useGtag()
-        event('article_view', {
+        event('article_reading', {
             article_id: articleId,
             article_title: articleTitle,
-            article_category: articleCategory,
-            article_tags: articleTags
         })
     },
 
