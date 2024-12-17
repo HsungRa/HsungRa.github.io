@@ -1,5 +1,5 @@
 import {httpGet} from '../util/HttpUtil.js'
-import {get} from "../util/StorageUtil.js";
+import {authInfo} from "../util/StorageUtil.js";
 
 const config = (token) => {
     return {
@@ -19,9 +19,8 @@ export class TestPostService {
     static readMarkdownFile(owner, repo, path, branch = 'main') {
         // 构建 GitHub API URL
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
-        const commentBy = JSON.parse(get('auth_user'));
         return new Promise((resolve, reject) => {
-            httpGet(url, null, config(commentBy.accessToken), '').then((data) => {
+            httpGet(url, null, config(authInfo.user.accessToken), '').then((data) => {
                 // GitHub API 返回的内容是 Base64 编码的
                 const content = Buffer.from(data.content, 'base64').toString('utf-8');
                 resolve(content);
@@ -62,9 +61,8 @@ export class TestPostService {
      */
     static getDirectoryTree(owner, repo, path = '', branch = 'main') {
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
-        const commentBy = JSON.parse(get('auth_user'));
         return new Promise((resolve, reject) => {
-            httpGet(url, null, config(commentBy.accessToken), '').then((data) => {
+            httpGet(url, null, config(authInfo.user.accessToken), '').then((data) => {
                 // 创建当前目录的结构
                 const result = {
                     name: path || 'root',

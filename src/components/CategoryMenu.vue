@@ -4,6 +4,8 @@
       class="category-menu"
       @select="handleSelect"
       active-text-color="#f68b5d"
+      background-color="{{activeTheme.backgroundColor}}"
+      text-color="{{activeTheme.color}}"
   >
     <template v-for="category in categories" :key="category.filePath">
       <category-menu-item :item="category"/>
@@ -14,7 +16,8 @@
 <script setup>
 import CategoryMenuItem from './CategoryMenuItem.vue';
 import {onMounted} from "vue";
-import {Events, publishEvent} from "../util/bus.js";
+import {Events, publishEvent} from "../util/Bus.js";
+import {activeTheme} from "../style/Themes.js";
 
 const props = defineProps({
   categories: {
@@ -25,7 +28,6 @@ const props = defineProps({
 const handleSelect = (key, keyPath) => {
   const articles = loadPosts(key);
   publishEvent(Events.LOAD_ARTICLE_SUMMARY_LIST, articles);
-
 }
 
 const loadPosts = (path) => {

@@ -1,13 +1,13 @@
 import 'vue-router';
-import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory,} from 'vue-router'
 import {
     ROUTER_404,
     ROUTER_500,
     ROUTER_ABOUT_ME,
     ROUTER_BLOG,
     ROUTER_HOME,
-    ROUTER_BLOG_PANEL,
-    ROUTER_CATEGORY, ROUTER_DEMO_PAGE, ROUTER_POSTS_PAGE
+    ROUTER_DEMO_PAGE,
+    ROUTER_POSTS_PAGE
 } from './router_names'
 
 /**
@@ -22,19 +22,24 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ '../views/HomePage.vue')
     },
     {
+        path: `/${ROUTER_POSTS_PAGE}`,
+        name: ROUTER_POSTS_PAGE,
+        component: () => import(/* webpackChunkName: "about" */ '../views/Posts.vue')
+    },
+    {
         path: `/${ROUTER_ABOUT_ME}`,
         name: ROUTER_ABOUT_ME,
+        component: () => import(/* webpackChunkName: "about" */ '../views/AboutMe.vue')
+    },
+    {
+        path: `/${ROUTER_DEMO_PAGE}`,
+        name: ROUTER_DEMO_PAGE,
         component: () => import(/* webpackChunkName: "about" */ '../views/DemoPage.vue')
     },
     {
         path: `/${ROUTER_BLOG}/:articleKey`,
         name: ROUTER_BLOG,
         component: () => import(/* webpackChunkName: "about" */ '../views/ArticleDetail.vue')
-    },
-    {
-        path: `/${ROUTER_CATEGORY}/:code`,
-        name: ROUTER_CATEGORY,
-        component: () => import(/* webpackChunkName: "about" */ '../views/CategoryList.vue')
     },
     {
         path: `/${ROUTER_404}`,
@@ -45,16 +50,6 @@ const routes = [
         path: `/${ROUTER_500}`,
         name: ROUTER_500,
         component: () => import(/* webpackChunkName: "about" */ '../views/error/500.vue')
-    },
-    {
-        path: `/${ROUTER_DEMO_PAGE}`,
-        name: ROUTER_DEMO_PAGE,
-        component: () => import(/* webpackChunkName: "about" */ '../views/DemoPage.vue')
-    },
-    {
-        path: `/${ROUTER_POSTS_PAGE}`,
-        name: ROUTER_DEMO_PAGE,
-        component: () => import(/* webpackChunkName: "about" */ '../views/Posts.vue')
     },
 ]
 

@@ -3,7 +3,7 @@
     <!-- 父级分类 -->
     <el-sub-menu :index="item.filePath">
       <template #title>
-        <h3>{{ item.name }}</h3>
+        <span style="font-size:18px;">{{ item.name }}</span>
       </template>
       <template v-for="subItem in item.children" :key="subItem.filePath">
         <category-menu-item :item="subItem" />
@@ -12,18 +12,16 @@
   </template>
   <template v-else>
     <el-menu-item :index="item.filePath">
-      <h3>{{ item.name }}</h3>
+      <span style="font-size:18px;">{{ item.name }}</span>
     </el-menu-item>
   </template>
 </template>
 
 <script>
-import {ROUTER_BLOG_PANEL} from "../router/router_names.js";
 
 export default {
   data() {
     return {
-      ROUTER_BLOG_PANEL: ROUTER_BLOG_PANEL
     };
   },
   props: {

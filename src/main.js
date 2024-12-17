@@ -34,7 +34,6 @@ import createTodoListPlugin from '@kangc/v-md-editor/lib/plugins/todo-list/index
 import '@kangc/v-md-editor/lib/plugins/todo-list/todo-list.css';
 // 内容定位
 import createAlignPlugin from '@kangc/v-md-editor/lib/plugins/align';
-
 // ===========================Markdown end ===========================
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
@@ -88,8 +87,6 @@ const fonts = [
     }
 ]
 
-
-// 配置 GA
 const app = createApp(App)
 app.use(router).use(ElementPlus).use(createVuestic(
     {

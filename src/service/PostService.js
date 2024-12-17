@@ -210,6 +210,85 @@ export class PostService {
             ? plainText.slice(0, length) + '...'
             : plainText;
     }
+
+    static async getLocalDirectoryTree3() {
+        try {
+
+            const files = import.meta.glob('/public/posts/**/*.md', {
+                eager: true,
+                as: 'raw'  // 获取原始内容
+            });
+
+            // 创建根目录结构
+            const tree = {
+                title: 'posts',
+                key: 'posts',
+                class: 'category_level_0',
+                posts: [],
+                children: {}
+            };
+
+            for (const filePath in files) {
+                const relativePath = filePath.replace('/public/posts/', '');
+                const pathParts = relativePath.split('/');
+                // 解析文件内容，获取 frontmatter 和正文
+                const content = files[filePath];
+                const { data: frontmatter, content: fileContent } = matter(content);
+                // 创建文件信息对象
+                const fileInfo = {
+                    name: pathParts[pathParts.length - 1],
+                    filePath: `posts/${relativePath}`,
+                    lastModified: frontmatter.date || new Date().toISOString(),
+                    summary: this.generateSummary(fileContent)
+                };
+                if (pathParts.length === 1) {
+                    tree.posts.push(fileInfo);
+                } else {
+                    let currentLevel = tree.children;
+                    let currentPath = 'posts';
+
+                    for (let i = 0; i < pathParts.length - 1; i++) {
+                        const part = pathParts[i];
+                        currentPath = `${currentPath}/${part}`;
+                        if (!currentLevel[part]) {
+                            currentLevel[part] = {
+                                title: part,
+                                key: currentPath,
+                                class: 'category_level_0', //todo
+                                posts: [],
+                                children: {}
+                            };
+                        }
+                        if (i === pathParts.length - 2) {
+                            // 最后一个目录，添加文件
+                            currentLevel[part].posts.push(fileInfo);
+                        } else {
+                            currentLevel = currentLevel[part].children;
+                        }
+                    }
+                }
+            }
+
+            // 将 children 对象转换为数组
+            const convertChildrenToArray = (node) => {
+                return Object.values(node.children).map(child => {
+                    return {
+                        ...child,
+                        children: convertChildrenToArray(child)
+                    };
+                });
+            };
+
+            return {
+                ...tree,
+                children: convertChildrenToArray(tree)
+            };
+        } catch (error) {
+            console.error('获取本地目录树失败:', error);
+            throw new Error('无法获取目录树');
+        }
+    }
+
 }
 
 

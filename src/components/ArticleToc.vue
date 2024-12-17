@@ -16,6 +16,8 @@
 
 <script setup>
 import { defineProps } from 'vue';
+import {activeTheme} from '../style/Themes.js'
+
 
 const props = defineProps({
   tocItems: {
@@ -40,13 +42,13 @@ const scrollToHeader = (id) => {
 .toc-title {
   font-weight: bold;
   margin-bottom: 10px;
-  color: #333;
+  color: v-bind(activeTheme.color);
 }
 
 .toc-item {
   cursor: pointer;
   margin: 5px 0;
-  color: #666;
+  color: v-bind(activeTheme.color);
 }
 
 .toc-item:hover {

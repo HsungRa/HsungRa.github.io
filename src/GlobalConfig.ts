@@ -1,7 +1,10 @@
 import {reactive, watch} from "vue";
 
+
+
 const globalConfig = reactive({
-    color: "#ffffff", // 默认背景色
+    color: "#f7f8fa", // 默认背景色
+
 });
 
 // 同步到 CSS 变量

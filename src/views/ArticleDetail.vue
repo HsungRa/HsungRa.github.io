@@ -8,6 +8,7 @@ import {Types} from "../util/LeftAsideType.js";
 import {useRouter} from "vue-router";
 import {analyticsService} from "../service/AnalyticsService.js";
 import {deterministicHash} from "../util/CryptoUtils.js";
+import {activeTheme} from '../style/Themes.js'
 
 const globalConfig = inject("globalConfig");
 const {currentRoute} = useRouter();
@@ -20,6 +21,7 @@ const commentNumber = ref('')
 const mdRef = ref(null)
 let stopTrackingReadTime;
 const articleId = deterministicHash(articleKey);
+
 onMounted(() => {
   parseMarkdownFile(`${articleKey.replace(/-/g, "/")}.md`).then(res => {
     markdownContent.value = res.content
@@ -57,7 +59,7 @@ onUnmounted(() => {
 // 处理滚动事件
 const handleScroll = () => {
   analyticsService.trackUserAction('scroll', {
-    article_id: currentArticle.id,
+    article_id: articleId,
     scroll_percentage: calculateScrollPercentage()
   })
 }
@@ -97,10 +99,10 @@ const generateToc = () => {
     <h1 class="title">{{ mdHeader.title }}</h1>
     <div class="meta">
       <div class="line">
-        <div><strong>category: </strong> {{ mdHeader.category }}</div>
-        <div><strong>date: </strong> {{ mdHeader.date }}</div>
+        <div><strong>Category:  </strong> {{ mdHeader.category }}</div>
+        <div><strong>Date: </strong> {{ mdHeader.date }}</div>
         <div>
-          <strong>tags: </strong>
+          <strong>Tags: </strong>
           <el-tag size="small" v-for="tag in mdHeader.tags" :key="tag">{{ tag }}</el-tag>
         </div>
       </div>
@@ -129,7 +131,7 @@ const generateToc = () => {
 
 .meta {
   font-size: 14px;
-  color: #666;
+  color: v-bind(activeTheme.color);
   margin-bottom: 20px;
   position: relative;
   width: 88%;

@@ -1,11 +1,11 @@
 <script setup>
-import {nextTick, provide, reactive, ref} from 'vue'
+import { provide, reactive, ref} from 'vue'
 import {RouterView} from 'vue-router'
 import HeadMenu from './components/HeadMenu.vue'
 import LeftAside from './components/LeftAside.vue'
+import {activeTheme} from './style/Themes.js'
 
 const globalConfig = reactive({
-  color: "#2f323c", // 全局背景色
   leftAsideConfig: {
     show: false,
     type: null,
@@ -19,14 +19,14 @@ provide(
 
 </script>
 <template>
-  <div class="app-wrapper" style="color: rgba(0, 0, 0, 0.8);">
+  <div class="app-wrapper" :style="activeTheme">
     <el-container>
       <el-header class="header">
-        <head-menu/>
+        <head-menu :style="activeTheme"/>
       </el-header>
       <el-container class='content-wrapper'>
         <el-aside class="menu">
-          <left-aside v-if="globalConfig.leftAsideConfig.show" :args="globalConfig.leftAsideConfig.args" :left-type="globalConfig.leftAsideConfig.type" />
+          <left-aside v-if="globalConfig.leftAsideConfig.show" :args="globalConfig.leftAsideConfig.args" :left-type="globalConfig.leftAsideConfig.type" :style="activeTheme"/>
         </el-aside>
         <el-main class="content">
           <router-view style="width:100%; height:100%;"/>

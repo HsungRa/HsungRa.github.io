@@ -7,17 +7,18 @@
           mode="horizontal"
           :items="items"
           @click="handlerClick"
+          :style="activeTheme"
           style="font-weight:bold"
       />
     </a-flex>
   </a-flex>
 </template>
 <script lang="ts" setup>
-import {h, onMounted, ref} from 'vue';
+import {h, ref} from 'vue';
 import {SearchOutlined, ReadOutlined, SmileOutlined, BugOutlined} from '@ant-design/icons-vue';
 import {MenuProps} from 'ant-design-vue';
 import {useRouter} from "vue-router";
-
+import {activeTheme} from '../style/Themes.js'
 const router = useRouter();
 const current = ref<string[]>(['mail']);
 const items = ref<MenuProps['items']>([
@@ -43,18 +44,20 @@ const items = ref<MenuProps['items']>([
     title: 'Message Me',
   },
   {
-    key: '/demo',
+    key: '/demopage',
     icon: () => h(BugOutlined),
     label: 'Demo',
     title: 'Demo',
   },
 ]);
 const handlerClick = ({item, key, keyPath}) => {
+  console.log('>>>>>>>>>>>>>>head menu:',key)
   if (key === '0') {
+    router.push({path: '/notfound'})
     return;
+  }else {
+    router.push({path: key})
   }
-  console.log(item, key, keyPath);
-  router.push({path: key})
 }
 </script>
 <style scoped>

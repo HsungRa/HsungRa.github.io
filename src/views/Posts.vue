@@ -3,7 +3,7 @@ import {useRouter} from 'vue-router'
 import {inject, onBeforeUnmount, onMounted, ref} from "vue";
 import {PostService} from '../service/PostService.js'
 import {Types} from "../util/LeftAsideType.js";
-import {Events, subscribeEvent, unsubscribeEvent} from '../util/bus.js';
+import {Events, subscribeEvent, unsubscribeEvent} from '../util/Bus.js';
 
 const router = useRouter();
 const categories = ref([])
@@ -57,7 +57,7 @@ onBeforeUnmount(()=>{
 <!--            </el-tag>-->
 <!--          </div>-->
         </div>
-        <div class="article-summary">{{ article.summary }}</div>
+        <strong class="article-summary">{{ article.summary }}</strong>
 <!--        <div class="article-footer">-->
 <!--          <span class="reading-time">预计阅读时间: {{ article.readingTime }}分钟</span>-->
 <!--          <span class="views">阅读量: {{ article.views }}</span>-->
@@ -122,6 +122,7 @@ onBeforeUnmount(()=>{
 .date {
   color: #666;
   margin-right: 15px;
+  font-family:"Times New Roman",Times,serif;
 }
 
 .tags {
