@@ -7,23 +7,19 @@ import Comment from '../components/Comment.vue'
 import {parseMarkdownFile} from "../service/ArticleService.js";
 import {Types} from "../util/LeftAsideType.js";
 import {activeTheme} from '../style/Themes.js'
-import {ElLoading} from "element-plus";
 
 const globalConfig = inject("globalConfig");
 const markdownContent = ref('');
 const mdHeader = ref({})
 const commentNumber = ref('')
 const mdRef = ref(null)
-const displaiable = ref(false)
-const loadingInstance = ElLoading.service({
-  lock:true,
-
-})
 
 onMounted(() => {
+  globalConfig.contentLoading = true;
   const {currentRoute} = useRouter();
   const route = currentRoute.value;
   parseMarkdownFile(`${route.params.articleKey.replace(/-/g, "/")}.md`).then(res => {
+    globalConfig.contentLoading = false;
     markdownContent.value = res.content
     commentNumber.value = res.commentNumber
     mdHeader.value = {
@@ -35,8 +31,6 @@ onMounted(() => {
     }
     // 等待markdown渲染完成后生成目录
     nextTick(() => {
-      loadingInstance.close()
-      displaiable.value = true
       generateToc();
     });
   })
@@ -66,7 +60,7 @@ const generateToc = () => {
 
 </script>
 <template>
-  <div v-if="displaiable" class="page-container" style="width:73%;float:left">
+  <div class="page-container" style="width:73%;float:left">
     <h1 class="title">{{ mdHeader.title }}</h1>
     <div class="meta">
       <div class="line">

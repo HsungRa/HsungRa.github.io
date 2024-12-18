@@ -8,10 +8,6 @@ export class PostService {
      * @returns {Promise<string>} markdown 文件内容
      */
     static readLocalMarkdownFile(filePath) {
-        PostService.readLocalMarkdownFile2(filePath).then(markdown => {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>readLocalMarkdownFile:',markdown);
-        });
-
         return new Promise((resolve, reject) => {
             fetch(`/${filePath}`).then((response) => {
                 if (response.ok) {
@@ -21,12 +17,6 @@ export class PostService {
                 }
 
             })
-        })
-    }
-    static readLocalMarkdownFile2(filePath) {
-        return new Promise((resolve, reject) => {
-            const content = import(`/${filePath}?raw`);
-            resolve(content.default)
         })
     }
 

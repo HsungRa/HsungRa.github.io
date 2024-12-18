@@ -6,6 +6,7 @@ import LeftAside from './components/LeftAside.vue'
 import {activeTheme} from './style/Themes.js'
 
 const globalConfig = reactive({
+  contentLoading: false,
   leftAsideConfig: {
     show: false,
     type: null,
@@ -16,7 +17,6 @@ const globalConfig = reactive({
 provide(
     'globalConfig', globalConfig
 )
-
 </script>
 <template>
   <div class="app-wrapper" :style="activeTheme">
@@ -24,10 +24,15 @@ provide(
       <el-header class="header">
         <head-menu :style="activeTheme"/>
       </el-header>
-      <el-container class='content-wrapper'>
+      <el-container
+          class='content-wrapper'
+          v-loading.lock="globalConfig.contentLoading"
+          :element-loading-background="activeTheme.backgroundColor"
+      >
         <el-aside class="menu">
           <left-aside v-if="globalConfig.leftAsideConfig.show" :args="globalConfig.leftAsideConfig.args" :left-type="globalConfig.leftAsideConfig.type" :style="activeTheme"/>
         </el-aside>
+<!--        {{activeTheme.backgroundColor}}-->
         <el-main class="content">
           <router-view style="width:100%; height:100%;"/>
         </el-main>
