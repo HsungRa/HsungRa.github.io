@@ -35,9 +35,9 @@ onMounted(() => {
     }
     // 等待markdown渲染完成后生成目录
     nextTick(() => {
-      generateToc();
       loadingInstance.close()
       displaiable.value = true
+      generateToc();
     });
   })
 });
