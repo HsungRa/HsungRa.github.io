@@ -1,4 +1,4 @@
-----
+---
 title: '关于模型训练'
 description: '本文'
 name: ''
@@ -7,7 +7,7 @@ tags: ['machine learning','model training']
 date: '2024/12/18 17:54:10'
 commentNumber: 33
 published: false
-----
+---
 
 什么是模型？
 模型可以看做一个庞大的函数，
