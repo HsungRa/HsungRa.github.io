@@ -3,12 +3,16 @@ import vue from '@vitejs/plugin-vue'
 import {NodeGlobalsPolyfillPlugin} from '@esbuild-plugins/node-globals-polyfill'
 import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 import prismjs from 'vite-plugin-prismjs';
+import Markdown from 'vite-plugin-md';
 
 // https://vitejs.dev/config/
 export default defineConfig({
     base: '/',
     plugins: [
-        vue(),
+        vue({
+            include: [/\.vue$/, /\.md$/], // 支持 .md 文件作为 Vue 组件
+        }),
+        Markdown(),
         nodePolyfills(),
         prismjs({
             // languages: ['json'],

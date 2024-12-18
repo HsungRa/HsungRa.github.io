@@ -4,7 +4,7 @@ export const ROUTER_500 = 'error'
 // Common Routers
 export const ROUTER_HOME = 'home'
 export const ROUTER_POSTS_PAGE = 'posts'
-export const ROUTER_BLOG = 'blog'
+export const ROUTER_POST_DETAIL = 'blog'
 export const ROUTER_ABOUT_ME = 'about'
 export const ROUTER_DEMO_PAGE = 'demopage'
 

@@ -6,17 +6,15 @@ import {Types} from "../util/LeftAsideType.js";
 import {Events, subscribeEvent, unsubscribeEvent} from '../util/Bus.js';
 
 const router = useRouter();
-const categories = ref([])
 const globalConfig = inject("globalConfig");
 const articles = ref([])
 
 const loadCategories = () => {
   PostService.getLocalDirectoryTree().then(res => {
-    categories.value = res.children
-    if (categories.value.length > 0) {
+    if (res.children.length > 0) {
       globalConfig.leftAsideConfig.show = true;
       globalConfig.leftAsideConfig.type = Types.POSTS_CATEGORY_MENU;
-      globalConfig.leftAsideConfig.args = categories.value;
+      globalConfig.leftAsideConfig.args = res.children;
     }
   })
 }

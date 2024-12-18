@@ -4,7 +4,7 @@ import {
     ROUTER_404,
     ROUTER_500,
     ROUTER_ABOUT_ME,
-    ROUTER_BLOG,
+    ROUTER_POST_DETAIL,
     ROUTER_HOME,
     ROUTER_DEMO_PAGE,
     ROUTER_POSTS_PAGE
@@ -24,7 +24,7 @@ const routes = [
     {
         path: `/${ROUTER_POSTS_PAGE}`,
         name: ROUTER_POSTS_PAGE,
-        component: () => import(/* webpackChunkName: "about" */ '../views/Posts.vue')
+        component: () => import(/* webpackChunkName: "about" */ '../views/PostList.vue')
     },
     {
         path: `/${ROUTER_ABOUT_ME}`,
@@ -37,9 +37,9 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ '../views/DemoPage.vue')
     },
     {
-        path: `/${ROUTER_BLOG}/:articleKey`,
-        name: ROUTER_BLOG,
-        component: () => import(/* webpackChunkName: "about" */ '../views/ArticleDetail.vue')
+        path: `/${ROUTER_POST_DETAIL}/:articleKey`,
+        name: ROUTER_POST_DETAIL,
+        component: () => import(/* webpackChunkName: "about" */ '../views/PostDetail.vue')
     },
     {
         path: `/${ROUTER_404}`,

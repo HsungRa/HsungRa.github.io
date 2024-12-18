@@ -38,6 +38,7 @@
     "prismjs": "^1.29.0",
     "qs": "^6.13.1",
     "string": "^3.3.3",
+    "vite-plugin-md": "^0.22.5",
     "vite-plugin-prismjs": "^0.0.11",
     "vue": "^3.4.21",
     "vue-gtag-next": "^1.14.0",

@@ -8,6 +8,10 @@ export class PostService {
      * @returns {Promise<string>} markdown 文件内容
      */
     static readLocalMarkdownFile(filePath) {
+        PostService.readLocalMarkdownFile2(filePath).then(markdown => {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>readLocalMarkdownFile:',markdown);
+        });
+
         return new Promise((resolve, reject) => {
             fetch(`/${filePath}`).then((response) => {
                 if (response.ok) {
@@ -19,7 +23,12 @@ export class PostService {
             })
         })
     }
-
+    static readLocalMarkdownFile2(filePath) {
+        return new Promise((resolve, reject) => {
+            const content = import(`/${filePath}?raw`);
+            resolve(content.default)
+        })
+    }
 
     /**
      * 获取本地目录的文件树结构
@@ -28,7 +37,7 @@ export class PostService {
     static getLocalDirectoryTree1() {
         return new Promise((resolve, reject) => {
             // 使用 Vite 的 glob 导入功能
-            const files = import.meta.glob('/public/posts/**/*.md', { eager: true });
+            const files = import.meta.glob('/public/posts/**/*.md', {eager: true});
             // 创建根目录结构
             const tree = {
                 name: 'posts',
@@ -132,7 +141,7 @@ export class PostService {
                 const pathParts = relativePath.split('/');
 
                 // 解析文件内容，获取 frontmatter 和正文
-                const { data: frontmatter, content: fileContent } = matter(content);
+                const {data: frontmatter, content: fileContent} = matter(content);
                 // 创建文件信息对象
                 const fileInfo = {
                     name: pathParts[pathParts.length - 1],
@@ -221,9 +230,8 @@ export class PostService {
 
             // 创建根目录结构
             const tree = {
-                title: 'posts',
-                key: 'posts',
-                class: 'category_level_0',
+                name: 'posts',
+                filePath: 'posts',
                 posts: [],
                 children: {}
             };
@@ -233,16 +241,16 @@ export class PostService {
                 const pathParts = relativePath.split('/');
                 // 解析文件内容，获取 frontmatter 和正文
                 const content = files[filePath];
-                const { data: frontmatter, content: fileContent } = matter(content);
+                const {data: frontMatter, content: markdownContent} = matter(content);
                 // 创建文件信息对象
-                const fileInfo = {
-                    name: pathParts[pathParts.length - 1],
-                    filePath: `posts/${relativePath}`,
-                    lastModified: frontmatter.date || new Date().toISOString(),
-                    summary: this.generateSummary(fileContent)
-                };
+
                 if (pathParts.length === 1) {
-                    tree.posts.push(fileInfo);
+                    tree.posts.push({
+                        name: pathParts[pathParts.length - 1],
+                        filePath: `posts/${relativePath}`,
+                        matter: frontMatter,
+                        content: markdownContent
+                    });
                 } else {
                     let currentLevel = tree.children;
                     let currentPath = 'posts';
@@ -252,16 +260,20 @@ export class PostService {
                         currentPath = `${currentPath}/${part}`;
                         if (!currentLevel[part]) {
                             currentLevel[part] = {
-                                title: part,
-                                key: currentPath,
-                                class: 'category_level_0', //todo
+                                name: part,
+                                filePath: currentPath,
                                 posts: [],
                                 children: {}
                             };
                         }
                         if (i === pathParts.length - 2) {
                             // 最后一个目录，添加文件
-                            currentLevel[part].posts.push(fileInfo);
+                            currentLevel[part].posts.push({
+                                name: pathParts[pathParts.length - 1],
+                                filePath: `posts/${relativePath}`,
+                                matter: frontMatter,
+                                content: markdownContent
+                            });
                         } else {
                             currentLevel = currentLevel[part].children;
                         }

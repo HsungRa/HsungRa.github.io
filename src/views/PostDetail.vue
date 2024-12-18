@@ -1,29 +1,29 @@
 <script setup>
 import "github-markdown-css/github-markdown.css"
 import "highlight.js/styles/atom-one-light.css"
-import {inject, nextTick, onMounted, onUnmounted, ref} from 'vue';
+import {inject, nextTick, onMounted, ref} from 'vue';
+import {useRouter} from "vue-router";
 import Comment from '../components/Comment.vue'
 import {parseMarkdownFile} from "../service/ArticleService.js";
 import {Types} from "../util/LeftAsideType.js";
-import {useRouter} from "vue-router";
-import {analyticsService} from "../service/AnalyticsService.js";
-import {deterministicHash} from "../util/CryptoUtils.js";
 import {activeTheme} from '../style/Themes.js'
+import {ElLoading} from "element-plus";
 
 const globalConfig = inject("globalConfig");
-const {currentRoute} = useRouter();
-const route = currentRoute.value;
-const articleKey = route.params.articleKey
-
 const markdownContent = ref('');
 const mdHeader = ref({})
 const commentNumber = ref('')
 const mdRef = ref(null)
-let stopTrackingReadTime;
-const articleId = deterministicHash(articleKey);
+const displaiable = ref(false)
+const loadingInstance = ElLoading.service({
+  lock:true,
+
+})
 
 onMounted(() => {
-  parseMarkdownFile(`${articleKey.replace(/-/g, "/")}.md`).then(res => {
+  const {currentRoute} = useRouter();
+  const route = currentRoute.value;
+  parseMarkdownFile(`${route.params.articleKey.replace(/-/g, "/")}.md`).then(res => {
     markdownContent.value = res.content
     commentNumber.value = res.commentNumber
     mdHeader.value = {
@@ -35,41 +35,12 @@ onMounted(() => {
     }
     // 等待markdown渲染完成后生成目录
     nextTick(() => {
-      analyticsService.trackArticleView(articleId, mdHeader.value.title)
       generateToc();
+      loadingInstance.close()
+      displaiable.value = true
     });
   })
-  // 开始跟踪阅读时间
-  stopTrackingReadTime = analyticsService.startTrackingReadTime(articleId)
-
-  // 添加滚动监听
-  window.addEventListener('scroll', handleScroll)
 });
-
-onUnmounted(() => {
-  // 停止跟踪阅读时间
-  if (stopTrackingReadTime) {
-    stopTrackingReadTime()
-  }
-
-  // 移除滚动监听
-  window.removeEventListener('scroll', handleScroll)
-});
-
-// 处理滚动事件
-const handleScroll = () => {
-  analyticsService.trackUserAction('scroll', {
-    article_id: articleId,
-    scroll_percentage: calculateScrollPercentage()
-  })
-}
-
-// 计算阅读进度
-const calculateScrollPercentage = () => {
-  const scrollTop = window.pageYOffset
-  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
-  return Math.round((scrollTop / scrollHeight) * 100)
-}
 
 // 解析标题生成目录树
 const generateToc = () => {
@@ -95,11 +66,11 @@ const generateToc = () => {
 
 </script>
 <template>
-  <div class="page-container" style="width:73%;float:left">
+  <div v-if="displaiable" class="page-container" style="width:73%;float:left">
     <h1 class="title">{{ mdHeader.title }}</h1>
     <div class="meta">
       <div class="line">
-        <div><strong>Category:  </strong> {{ mdHeader.category }}</div>
+        <div><strong>Category: </strong> {{ mdHeader.category }}</div>
         <div><strong>Date: </strong> {{ mdHeader.date }}</div>
         <div>
           <strong>Tags: </strong>
