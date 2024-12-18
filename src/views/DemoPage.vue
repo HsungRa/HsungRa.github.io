@@ -1,93 +1,80 @@
 <template>
-  <a-tree
-      v-model:selectedKeys="selectedKeys"
-      :expanded-keys="expandedKeys"
-      :tree-data="treeData"
-      @expand="handleExpand"
-  >
-    <template #title="{ title, key }">
-      <h1>
-        <span v-if="key === '0-0-1-0'" style="color: #1890ff">{{ title }}</span>
-        <template v-else>{{ title }}</template>
-      </h1>
-    </template>
-  </a-tree>
+  <a-space>
+    <a-button type="primary" @click="testReadMarkdownFile">testReadMarkdownFile</a-button>
+    <a-button type="primary" @click="testReadLocalMarkdownFile">testReadLocalMarkdownFile</a-button>
+    <a-button type="primary" @click="testGetDirectoryTree">testGetDirectoryTree</a-button>
+    <a-button type="primary" @click="testGetLocalDirectoryTree">testGetLocalDirectoryTree</a-button>
+  </a-space>
 </template>
 <script lang="ts" setup>
-import {onMounted, ref, watch} from 'vue';
-import type { TreeProps } from 'ant-design-vue';
-import difference from 'lodash-es/difference';
+import {TestPostService} from '../service/TestPostService.js'
+import {ref} from "vue";
 
-const props = defineProps({
-  categories: {
-    required: true,
-  },
-});
+const treeCache =ref(null)
 
-// const treeData=ref(null);
-//
-// onMounted(() => {
-//
-// })
+const testReadMarkdownFile = () => {
+  TestPostService.readMarkdownFile('HsungRa', 'HsungRa.github.io', 'public/posts/demo.md', 'gh-pages').then(res => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>readMarkdownFile", res)
+  })
+}
+
+const testReadLocalMarkdownFile = () => {
+  TestPostService.readLocalMarkdownFile('posts/demo.md').then(res => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>readMarkdownFile", res)
+  })
+}
+
+const testGetDirectoryTree = () => {
+  TestPostService.getDirectoryTree('HsungRa', 'HsungRa.github.io', 'public/posts', 'gh-pages').then(res => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>getDirectoryTree", res)
+  })
+}
+
+const testGetLocalDirectoryTree = () => {
+  TestPostService.getLocalDirectoryTree('posts').then(res => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>getDirectoryTree", res)
+    treeCache.value = res
+
+    const res1=getPosts2('posts/java/spring');
+    console.log(">>>>>>>>>>>>>>>>>>>>>getPosts posts/java/spring", res1)
 
 
-const treeData: TreeProps['treeData'] = [
-  {
-    title: 'parent 1',
-    key: '0-0',
-    style: 'font-size: 20px;',
-    children: [
-      {
-        title: 'parent 1-0',
-        key: '0-0-0',
-        children: [
-          { title: 'leaf', key: '0-0-0-0' },
-          { title: 'leaf', key: '0-0-0-1' },
-        ],
-      },
-      {
-        title: 'parent 1-1',
-        key: '0-0-1',
-        children: [{ key: '0-0-1-0', title: 'sss' }],
-      },
-    ],
-  },
-  {
-    title: 'parent 2',
-    key: '1-0',
-    children: [
-      {
-        title: 'parent 2-0',
-        key: '1-0-0',
-      },
-      {
-        title: 'parent 2-1',
-        key: '2-0-1',
-      },
-    ],
-  },
-];
+    const res2=getPosts2('posts/machine learning');
+    console.log(">>>>>>>>>>>>>>>>>>>>>getPosts posts/machine learning", res2)
+  })
 
-const expandedKeys = ref<string[]>([]);
-const selectedKeys = ref<string[]>(['0-0-0', '0-0-1']);
-const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
-watch(expandedKeys, () => {
-  console.log('expandedKeys', expandedKeys);
-});
-watch(selectedKeys, () => {
-  console.log('selectedKeys', selectedKeys);
-});
-watch(checkedKeys, () => {
-  console.log('checkedKeys', checkedKeys);
-});
-const handleExpand = (keys: string[], { expanded, node }) => {
-  // node.parent add from 3.0.0-alpha.10
-  const tempKeys = ((node.parent ? node.parent.children : treeData) || []).map(({ key }) => key);
-  if (expanded) {
-    expandedKeys.value = difference(keys, tempKeys).concat(node.key);
-  } else {
-    expandedKeys.value = keys;
+
+}
+
+const getPosts2= (path)=>{
+  try {
+    // 如果目录树缓存不存在，先获取完整的目录树
+    if (!treeCache.value) {
+      return
+    }
+
+    // 递归查找指定路径的目录
+    const findDirectory = (tree, targetPath) => {
+      if (tree.filePath === targetPath) {
+        return tree;
+      }
+      for (const child of tree.children) {
+        const found = findDirectory(child, targetPath);
+        if (found) return found;
+      }
+      return null;
+    };
+
+    // 在缓存的目录树中查找指定目录
+    const directory = findDirectory(treeCache.value, path);
+    if (!directory) {
+      return []
+    }
+    return directory.posts;
+  } catch (error) {
+    console.error('获取文件列表失败:', error);
+    throw new Error(`无法获取目录 ${path} 下的文件`);
   }
-};
-</script>
+}
 
+</script>

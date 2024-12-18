@@ -1,89 +1,3 @@
-<!--<template>-->
-<!--  <a-layout style="height: 100%; width: 100%">-->
-<!--    <a-layout-sider :style="siderStyle">Sider</a-layout-sider>-->
-<!--    <a-layout>-->
-<!--      <a-layout-content :style="contentStyle">-->
-<!--        <a-flex gap="middle" align="start" vertical>-->
-<!--          <a-card>-->
-<!--            <p>How Are U</p>-->
-<!--          </a-card>-->
-<!--        </a-flex>-->
-<!--        <a-flex gap="middle" align="end" vertical>-->
-<!--          <a-card>-->
-<!--            <p>Im Fine Thank U</p>-->
-<!--          </a-card>-->
-<!--        </a-flex>-->
-
-<!--      </a-layout-content>-->
-<!--      <a-layout-footer :style="footerStyle">-->
-<!--        <a-input :value="value" :style="inputStyle" placeholder="">-->
-<!--          <template #suffix>-->
-<!--            <a-button type="primary" shape="round">-->
-<!--              <template #icon>-->
-<!--                <UploadOutlined />-->
-<!--              </template>-->
-<!--            </a-button>-->
-<!--          </template>-->
-<!--        </a-input>-->
-<!--      </a-layout-footer>-->
-<!--    </a-layout>-->
-<!--  </a-layout>-->
-
-<!--</template>-->
-
-<!--<script>-->
-<!--import {UploadOutlined} from '@ant-design/icons-vue';-->
-<!--import {nextTick} from "vue";-->
-
-<!--export default {-->
-<!--  components: {-->
-<!--    UploadOutlined,-->
-<!--  },-->
-<!--  data() {-->
-<!--    return {-->
-<!--      // 定义全局数据-->
-<!--      value: '',-->
-<!--      footerStyle: {-->
-<!--        textAlign: 'center',-->
-<!--        height: '20%',-->
-<!--        // width: '80%',-->
-<!--        backgroundColor: '#f8e6db',-->
-<!--      },-->
-<!--      siderStyle: {-->
-<!--        height: '100%',-->
-<!--        width: '20%',-->
-<!--        backgroundColor: '#c6dcec',-->
-<!--      },-->
-<!--      contentStyle: {-->
-<!--        height: '80%',-->
-<!--        // width: '80%',-->
-<!--        backgroundColor: '#f8efc8',-->
-<!--      },-->
-<!--      inputStyle:{-->
-<!--        width: '60%',-->
-<!--        height: '80%',-->
-<!--      }-->
-<!--    };-->
-<!--  },-->
-<!--  created() {-->
-<!--    console.log("Component created.");-->
-<!--  },-->
-<!--  methods: {-->
-<!--    demoMethod() {-->
-<!--      // 定义函数-->
-<!--    },-->
-<!--  },-->
-<!--  mounted() {-->
-<!--    console.log("Component mounted.");-->
-<!--    // 钩子函数-->
-<!--  },-->
-<!--  nextTick() {-->
-<!--    console.log("Component nextTick.");-->
-<!--  },-->
-<!--};-->
-
-<!--</script>-->
-
 <template>
   <a-row>
     <a-col :span="3"></a-col>
@@ -124,8 +38,13 @@
 </template>
 
 <script setup>
-import {ref, reactive, onMounted} from 'vue';
+import {ref, reactive, onMounted, inject} from 'vue';
 import {ToTopOutlined} from '@ant-design/icons-vue';
+
+const globalConfig = inject("globalConfig");
+globalConfig.leftAsideConfig.show = false;
+globalConfig.leftAsideConfig.type = null;
+globalConfig.leftAsideConfig.args = null;
 
 const userInput = ref('')
 const messageList = ref([])

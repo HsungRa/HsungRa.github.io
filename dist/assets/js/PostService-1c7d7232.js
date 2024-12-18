@@ -1,4 +1,4 @@
-import{_ as __vite_glob_0_0,a as __vite_glob_0_1,b as __vite_glob_0_2,c as __vite_glob_0_3,d as __vite_glob_0_4}from"./todo-db7772ba.js";import{p as buffer,K as getDefaultExportFromCjs}from"./index-70cec245.js";const __vite_glob_2_0=`---
+import{_ as __vite_glob_0_0,a as __vite_glob_0_1,b as __vite_glob_0_2,c as __vite_glob_0_3,d as __vite_glob_0_4}from"./todo-db7772ba.js";import{x as buffer,C as getDefaultExportFromCjs}from"./index-f197f881.js";const __vite_glob_2_0=`---
 title: 'demo blog'
 description: 'this is a demo for blog display'
 name: 'hello'
