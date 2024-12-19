@@ -5,6 +5,7 @@ name: ''
 category: 'ML'
 tags: ['machine learning','python']
 date: '2024/12/13 11:54:10'
+published: true
 ---
 
 # 1. pytorch

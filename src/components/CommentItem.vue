@@ -1,6 +1,13 @@
 <script>
 
+import {activeTheme} from "../style/Themes.js";
+
 export default {
+  computed: {
+    activeTheme() {
+      return activeTheme
+    }
+  },
   data() {
     return {
     };
@@ -21,18 +28,17 @@ export default {
   }
 }
 </script>
-
 <template>
   <template v-if="item.children && item.children.length > 0">
-    <a-comment>
+    <a-comment :style="{color:activeTheme.color}">
       <template #actions>
-        <span key="comment-nested-reply-to" @click="reply(item)">Reply to</span>
+        <span :style="{color:activeTheme.color}" key="comment-nested-reply-to" @click="reply(item)">Reply to</span>
       </template>
       <template #author>
-        <a>{{item.user_name}} {{ item.comment_at }}</a>
+        <a :style="{color:activeTheme.color}">{{item.userName}} {{ item.commentAt }}</a>
       </template>
       <template #avatar>
-        <a-avatar :src="item.user_avatar" :alt="item.user_name" />
+        <a-avatar :src="item.userAvatar" :alt="item.userName" />
       </template>
       <template #content>
         <p>
@@ -45,15 +51,15 @@ export default {
     </a-comment>
   </template>
   <template v-else>
-    <a-comment>
+    <a-comment :style="{color:activeTheme.color}">
       <template #actions>
-        <span key="comment-nested-reply-to" @click="reply(item)">Reply to</span>
+        <span :style="{color:activeTheme.color}" key="comment-nested-reply-to" @click="reply(item)">Reply to</span>
       </template>
       <template #author>
-        <a>{{item.user_name}} {{ item.comment_at }}</a>
+        <a :style="{color:activeTheme.color}">{{item.userName}} {{ item.commentAt }}</a>
       </template>
       <template #avatar>
-        <a-avatar :src="item.user_avatar" :alt="item.user_name" />
+        <a-avatar :src="item.userAvatar" :alt="item.userName" />
       </template>
       <template #content>
         <p>

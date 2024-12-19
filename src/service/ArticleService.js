@@ -1,5 +1,6 @@
 import matter from 'gray-matter';
 import {PostService} from "./PostService.js";
+import {isNull} from "../util/ObjectsUtils.js";
 
 
 /**
@@ -73,9 +74,8 @@ export const parseMarkdownFile = (filePath) => {
                     name: frontMatter.name || '',
                     category: frontMatter.category || 'uncategorized',
                     tags: frontMatter.tags || [],
-                    date: frontMatter.date || new Date(),
+                    date: isNull(frontMatter.date)? '':frontMatter.date,
                     summary: extractSummary(res),
-                    commentNumber: frontMatter.commentNumber || null,
                     content: markdownContent
                 })
             } catch (error) {

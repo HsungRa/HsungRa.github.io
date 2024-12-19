@@ -1,27 +1,41 @@
 <script setup>
 import "github-markdown-css/github-markdown.css"
 import "highlight.js/styles/atom-one-light.css"
-import {inject, nextTick, onMounted, ref} from 'vue';
+import {inject, nextTick, onBeforeMount, onMounted, ref} from 'vue';
 import {useRouter} from "vue-router";
 import Comment from '../components/Comment.vue'
 import {parseMarkdownFile} from "../service/ArticleService.js";
 import {Types} from "../util/LeftAsideType.js";
 import {activeTheme} from '../style/Themes.js'
+import {decodeBase64} from "../util/CryptoUtils.js";
+const {currentRoute} = useRouter();
+const route = currentRoute.value;
 
 const globalConfig = inject("globalConfig");
 const markdownContent = ref('');
 const mdHeader = ref({})
-const commentNumber = ref('')
+const postPath=`${route.params.articleKey.replace(/-/g, "/")}.md`
 const mdRef = ref(null)
 
+const readCommentNumber=()=> {
+  let cmtNo=route.query.cmtNo;
+  if (cmtNo){
+    cmtNo = decodeBase64(cmtNo);
+    const lastAtIndex = cmtNo.lastIndexOf('@');
+    if (lastAtIndex === -1) {
+      return null;
+    }
+    if (postPath===cmtNo.substring(0, lastAtIndex)){
+      return cmtNo.substring(lastAtIndex + 1);
+    }
+    return null;
+  }
+}
 onMounted(() => {
   globalConfig.contentLoading = true;
-  const {currentRoute} = useRouter();
-  const route = currentRoute.value;
-  parseMarkdownFile(`${route.params.articleKey.replace(/-/g, "/")}.md`).then(res => {
+  parseMarkdownFile(postPath).then(res => {
     globalConfig.contentLoading = false;
     markdownContent.value = res.content
-    commentNumber.value = res.commentNumber
     mdHeader.value = {
       title: res.title,
       date: res.date,
@@ -76,7 +90,7 @@ const generateToc = () => {
       <v-md-preview :text="markdownContent" ref="mdRef"/>
     </div>
     <div style="clear:both;">
-      <Comment :commentNumber="commentNumber" v-if="commentNumber !== null && commentNumber!==undefined"></Comment>
+      <Comment :commentNumber="readCommentNumber()"></Comment>
     </div>
   </div>
 </template>

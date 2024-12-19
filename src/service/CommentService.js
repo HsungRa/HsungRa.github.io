@@ -1,5 +1,7 @@
 import {httpGet, httpPost} from '../util/HttpUtil.js'
 import {sign} from "../util/CryptoUtils.js";
+import {formatDate} from "../util/DateTimeUtils.js";
+import {isNull} from "../util/ObjectsUtils.js";
 
 const COMMENT_API_PRE_PATH = `https://api.github.com/repos/HsungRa/blog_comments`
 
@@ -30,12 +32,12 @@ class CommentNode {
         this.userName = userName;
         this.userAvatar = userAvatar;
         this.content = content;
-        this.commentAt = commentAt;
+        this.commentAt = isNull(commentAt)||commentAt.trim().length===0?null:formatDate(new Date(commentAt));
         this.children = children;
     }
 
     // Getter for key
-    get key() {
+    get nodeKey() {
         return sign(this.content.trim());
     }
 }
@@ -56,8 +58,8 @@ class CommentTree {
     appendNode(node, applyToKey) {
         if (applyToKey == null) {
             const len = this.root.children.length;
-            this.root.children.append(node);
-            this.indexMap[node.key()] = [len];
+            this.root.children.push(node);
+            this.indexMap[node.nodeKey] = [len];
         } else {
             const applyToIndex = this.indexMap[applyToKey];
             let applyTo = this.root.children[applyToIndex[0]];
@@ -67,8 +69,8 @@ class CommentTree {
                 idx += 1;
             }
             const len = applyTo.children.length;
-            applyTo.children.append(node);
-            this.indexMap[node.key()] = [...applyToIndex, len];
+            applyTo.children.push(node);
+            this.indexMap[node.nodeKey] = [...applyToIndex, len];
         }
     }
 }
@@ -82,14 +84,15 @@ export const loadComment = (authUser, commentNumber) => {
     return new Promise((resolve, reject) => {
         if (authUser !== null && commentNumber !== null && commentNumber !== undefined) {
             httpGet(
-                `${COMMENT_API_PRE_PATH}/${commentNumber}/comments/issues`,
+                `${COMMENT_API_PRE_PATH}/issues/${commentNumber}/comments`,
                 null,
                 config(authUser.accessToken),
                 ''
             ).then((res) => {
                 const commentTree = CommentTree.newTree();
                 const pattern = /(>.*?(?:\r\n)+)/g;
-                for (const comment in res) {
+                for (const i in res) {
+                    const comment = res[i];
                     const contents = comment.body.split(pattern);
                     const contentLen = contents.length;
                     let pk = null

@@ -19,8 +19,8 @@ const loadCategories = () => {
   })
 }
 
-const gotoArticle = (articleFilePath) => {
-  router.push({path: `/blog/${articleFilePath.replace('.md','').replace(/\//g, "-")}`})
+const gotoArticle = (article) => {
+  router.push({path: `/blog/${article.filePath.replace('.md','').replace(/\//g, "-")}`,query:{cmtNo:article.cmtNo}})
 }
 
 onMounted(() => {
@@ -42,7 +42,7 @@ onBeforeUnmount(()=>{
       <div v-for="article in articles"
            :key="article.filePath"
            class="article-item"
-           @click="gotoArticle(article.filePath)">
+           @click="gotoArticle(article)">
         <div class="article-title">{{ article.name }}</div>
         <div class="article-meta">
           <span class="date">{{ article.lastModified }}</span>

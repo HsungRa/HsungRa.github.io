@@ -1,4 +1,7 @@
 import matter from "gray-matter";
+import {authInfo} from "../util/StorageUtil.js";
+import {encodeBase64} from "../util/CryptoUtils.js";
+import {isNull} from "../util/ObjectsUtils.js";
 
 export class PostService {
 
@@ -136,10 +139,11 @@ export class PostService {
                 const fileInfo = {
                     name: pathParts[pathParts.length - 1],
                     filePath: `posts/${relativePath}`,
-                    lastModified: frontmatter.date || new Date().toISOString(), // 优先使用 frontmatter 中的日期
+                    lastModified: isNull(frontmatter.date)? '':frontmatter.date, // 优先使用 frontmatter 中的日期
+                    cmtNo: isNull(frontmatter.commentNumber) || frontmatter.commentNumber === '' ? null : encodeBase64(`posts/${relativePath}@${frontmatter.commentNumber}`),
                     summary: this.generateSummary(fileContent)
                 };
-                if (pathParts.length === 1) {
+                if (pathParts.length === 1 && ((authInfo.user != null && authInfo.user.email === "m15801983447@163.com") || frontmatter.published)) {
                     // 根目录下的文件
                     tree.posts.push(fileInfo);
                 } else {
@@ -158,7 +162,7 @@ export class PostService {
                                 children: {}
                             };
                         }
-                        if (i === pathParts.length - 2) {
+                        if (i === pathParts.length - 2 && ((authInfo.user != null && authInfo.user.email === "m15801983447@163.com") || frontmatter.published)) {
                             // 最后一个目录，添加文件
                             currentLevel[part].posts.push(fileInfo);
                         } else {

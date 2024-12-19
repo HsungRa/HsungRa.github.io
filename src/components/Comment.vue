@@ -1,14 +1,15 @@
 <template>
-  <template v-for="comment in comments" :key="comment.id">
-    <comment-item :item="comment" @reply="handleReply"/>
-  </template>
-  <a-comment>
-    <template #avatar>
-      <a-avatar :src="userAvatar" alt="hi~">
-      </a-avatar>
+  <template v-if="null!==authUser && commentNumber!==null && commentNumber!==undefined">
+    <template v-for="comment in comments" :key="comment.commentId">
+      <comment-item :item="comment" @reply="handleReply"/>
     </template>
-    <template #content>
-      <a-form-item>
+    <a-comment>
+      <template #avatar>
+        <a-avatar :src="userAvatar" alt="hi~">
+        </a-avatar>
+      </template>
+      <template #content>
+        <a-form-item>
         <span key="comment-basic-cancelReply" v-if="replyTo !=null">
           <span style="color: #cccecf; cursor: auto">
             @{{ replyTo.length > 150 ? replyTo.substring(0, 150) +'...' : replyTo }}
@@ -17,15 +18,20 @@
             <CloseCircleOutlined @click="cancelReply" :style="{fontSize: '13px', color: '#cccecf', float:'right'}"/>
           </a-tooltip>
         </span>
-        <a-textarea v-model:value="commentText" :rows="4" :maxlength="500" ref="commentInput"/>
-      </a-form-item>
-      <a-form-item>
-        <a-button html-type="submit" type="primary" @click="addComment()">
-          Add Comment
-        </a-button>
-      </a-form-item>
-    </template>
-  </a-comment>
+          <a-textarea v-model:value="commentText" :rows="4" :maxlength="500" ref="commentInput"/>
+        </a-form-item>
+        <a-form-item>
+          <a-button html-type="submit" type="primary" @click="addComment()">
+            Add Comment
+          </a-button>
+        </a-form-item>
+      </template>
+    </a-comment>
+  </template>
+  <template v-else-if="commentNumber!==null && commentNumber!==undefined">
+    <a-card title="参与评论" hoverable @click="auth4Comment">
+    </a-card>
+  </template>
 </template>
 
 <script>
@@ -37,12 +43,12 @@ import {authCheck,} from "../util/ThirdAuthUtil.js";
 import CommentItem from "./CommentItem.vue";
 import {CloseCircleOutlined} from '@ant-design/icons-vue';
 import {authInfo} from "../util/StorageUtil.js";
+import {isNull} from "../util/ObjectsUtils.js";
 
 export default {
   components: {CommentItem, CloseCircleOutlined,},
   props: {
     commentNumber: {
-      type: String,
       required: true
     }
   },
@@ -58,6 +64,18 @@ export default {
     };
   },
   methods: {
+    auth4Comment(){
+      authCheck((authUser)=> {
+        this.authUser = authUser
+        if (this.authUser !== null && this.commentNumber!==null && this.commentNumber!==undefined) {
+          loadComment(this.authUser,this.commentNumber).then((res) => {
+            if (res !== null){
+              this.comments = res.root.children
+            }
+          });
+        }
+      });
+    },
     toggleReplyForm(number) {
       if (this.showReplyForm !== number) {
         this.showReplyForm = number;
@@ -93,7 +111,7 @@ export default {
             return;
           }
           this.commentText = '';
-          loadComment(this.commentNumber).then((res) => {
+          loadComment(this.authUser, this.commentNumber).then((res) => {
             this.comments = res.root.children
           });
         });
@@ -101,9 +119,10 @@ export default {
     },
   },
   mounted() {
+    const a = this.commentNumber
     this.authUser = authInfo.user
-    if (this.authUser !== null && this.commentNumber!==null && this.commentNumber!==undefined) {
-      loadComment(this.commentNumber).then((res) => {
+    if (this.authUser !== null && !isNull(this.commentNumber)) {
+      loadComment(this.authUser,this.commentNumber).then((res) => {
         if (res !== null){
           this.comments = res.root.children
         }
