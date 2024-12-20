@@ -41,3 +41,4 @@ published: false
 - [ ]  卷积
 - [ ]  LLM Agent: What. Why. How
 - [ ]  Transformer: What. Why. How
+- [ ]  什么是数据中的”噪声“
